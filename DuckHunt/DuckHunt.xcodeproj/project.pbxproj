@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EFDCA61F26389081007848B6 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFDCA61E26389081007848B6 /* GameScene.sks */; };
 		EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F062631F6CB00D45033 /* AppDelegate.swift */; };
-		EFE20F092631F6CB00D45033 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F082631F6CB00D45033 /* GameScene.sks */; };
 		EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F0A2631F6CB00D45033 /* Actions.sks */; };
 		EFE20F0D2631F6CB00D45033 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F0C2631F6CB00D45033 /* GameScene.swift */; };
 		EFE20F0F2631F6CB00D45033 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F0E2631F6CB00D45033 /* GameViewController.swift */; };
@@ -17,9 +17,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EFDCA61E26389081007848B6 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = GameScene.sks; path = ../../../SpaceInvaders/SpaceInvaders/GameScene.sks; sourceTree = "<group>"; };
 		EFE20F032631F6CB00D45033 /* DuckHunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckHunt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE20F062631F6CB00D45033 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EFE20F082631F6CB00D45033 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		EFE20F0A2631F6CB00D45033 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		EFE20F0C2631F6CB00D45033 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		EFE20F0E2631F6CB00D45033 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -59,8 +59,8 @@
 			isa = PBXGroup;
 			children = (
 				EFE20F062631F6CB00D45033 /* AppDelegate.swift */,
-				EFE20F082631F6CB00D45033 /* GameScene.sks */,
 				EFE20F0A2631F6CB00D45033 /* Actions.sks */,
+				EFDCA61E26389081007848B6 /* GameScene.sks */,
 				EFE20F0C2631F6CB00D45033 /* GameScene.swift */,
 				EFE20F0E2631F6CB00D45033 /* GameViewController.swift */,
 				EFE20F102631F6CB00D45033 /* Main.storyboard */,
@@ -127,8 +127,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFDCA61F26389081007848B6 /* GameScene.sks in Resources */,
 				EFE20F122631F6CB00D45033 /* Main.storyboard in Resources */,
-				EFE20F092631F6CB00D45033 /* GameScene.sks in Resources */,
 				EFE20F142631F6CC00D45033 /* Assets.xcassets in Resources */,
 				EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */,
 			);
