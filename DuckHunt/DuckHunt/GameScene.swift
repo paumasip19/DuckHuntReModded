@@ -10,16 +10,19 @@ import GameplayKit
 
 class GameScene: SKScene {
     var aimSprite: SKSpriteNode!
+
+    var duck1: Duck!
     
     override func didMove(to _: SKView) {
-        self.backgroundColor = .red
+        //Background
+        initBackground(number: 0);
         
-        self.aimSprite = SKSpriteNode(imageNamed: "Aim")
-        self.aimSprite.name = "Aim"
-        self.aimSprite.size = CGSize(width: 200, height: 200)
+        //Enemy Trial
+        duck1 = Duck(duckType: 1, duckNumber: 0)
+        addChild(duck1.node)
         
-        self.aimSprite.position = CGPoint(x: 300, y: 300)
-        self.addChild(self.aimSprite)
+        //Aim
+        initAim()
     }
     
     

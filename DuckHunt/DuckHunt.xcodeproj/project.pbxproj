@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0BE929263B206200164974 /* GameScene+Creations.swift */; };
+		EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0BE92C263B285C00164974 /* DuckEnemy.swift */; };
 		EFDCA61F26389081007848B6 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFDCA61E26389081007848B6 /* GameScene.sks */; };
 		EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F062631F6CB00D45033 /* AppDelegate.swift */; };
 		EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F0A2631F6CB00D45033 /* Actions.sks */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EF0BE929263B206200164974 /* GameScene+Creations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameScene+Creations.swift"; sourceTree = "<group>"; };
+		EF0BE92C263B285C00164974 /* DuckEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckEnemy.swift; sourceTree = "<group>"; };
 		EFDCA61E26389081007848B6 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = GameScene.sks; path = ../../../SpaceInvaders/SpaceInvaders/GameScene.sks; sourceTree = "<group>"; };
 		EFE20F032631F6CB00D45033 /* DuckHunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckHunt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE20F062631F6CB00D45033 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -62,7 +66,9 @@
 				EFE20F0A2631F6CB00D45033 /* Actions.sks */,
 				EFDCA61E26389081007848B6 /* GameScene.sks */,
 				EFE20F0C2631F6CB00D45033 /* GameScene.swift */,
+				EF0BE929263B206200164974 /* GameScene+Creations.swift */,
 				EFE20F0E2631F6CB00D45033 /* GameViewController.swift */,
+				EF0BE92C263B285C00164974 /* DuckEnemy.swift */,
 				EFE20F102631F6CB00D45033 /* Main.storyboard */,
 				EFE20F132631F6CC00D45033 /* Assets.xcassets */,
 				EFE20F152631F6CC00D45033 /* Info.plist */,
@@ -144,6 +150,8 @@
 				EFE20F0D2631F6CB00D45033 /* GameScene.swift in Sources */,
 				EFE20F0F2631F6CB00D45033 /* GameViewController.swift in Sources */,
 				EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */,
+				EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */,
+				EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
