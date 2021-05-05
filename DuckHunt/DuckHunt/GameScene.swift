@@ -18,7 +18,7 @@ class GameScene: SKScene {
         initBackground(number: 0);
         
         //Enemy Trial
-        duck1 = Duck(duckType: 1, duckNumber: 0)
+        duck1 = Duck(duckType: 2, duckNumber: 0)
         addChild(duck1.node)
         
         //Aim
