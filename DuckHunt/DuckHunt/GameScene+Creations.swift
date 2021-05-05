@@ -19,6 +19,9 @@ extension GameScene {
         let bgSize = background.size
         background.size = CGSize(width: bgSize.width * 3,
                                  height: bgSize.height * 3)
+        background.anchorPoint = CGPoint(x: 0, y: 0)
+        background.position = CGPoint(x: 0, y: UIScreen.main.bounds.height/2+50)
+        print(background.position)
         background.zPosition = -1
         addChild(background)
     }
@@ -27,7 +30,8 @@ extension GameScene {
     {
         self.aimSprite = SKSpriteNode(imageNamed: "Aim")
         self.aimSprite.name = "Aim"
-        self.aimSprite.size = CGSize(width: 200, height: 200)
+        self.aimSprite.size = CGSize(width: 80, height: 80)
+        self.aimSprite.zPosition = 15
         
         self.aimSprite.position = CGPoint(x: 300, y: 300)
         self.addChild(self.aimSprite)

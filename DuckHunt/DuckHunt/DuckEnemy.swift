@@ -21,12 +21,12 @@ struct Duck {
     
     var node: SKSpriteNode!
     
-    init(duckType: Int, duckNumber: Int){
+    init(duckType: Int, duckNumber: Int, duckPosition: CGPoint){
         //Basics
         self.node = SKSpriteNode(imageNamed: "Duck" + String(duckType) + "_" + String(duckNumber))
         
         self.node?.size = CGSize(width: 120, height: 120)
-        self.node.position = CGPoint(x: 100, y: 100)
+        self.node.position = duckPosition
         
         self.node.zPosition = 10
         
@@ -119,3 +119,23 @@ private let flyDiagonal3Animation  = [SKTexture(imageNamed: "Duck3_3"),
 private let flyDiagonal1ActionKey = "FlyDiagonal1"
 private let flyDiagonal2ActionKey = "FlyDiagonal2"
 private let flyDiagonal3ActionKey = "FlyDiagonal3"
+
+//Fly Up Animations
+private let flyUp1Animation = [SKTexture(imageNamed: "Duck1_6"),
+                               SKTexture(imageNamed: "Duck1_7"),
+                               SKTexture(imageNamed: "Duck1_8"),
+                               SKTexture(imageNamed: "Duck1_7")]
+
+private let flyUp2Animation  = [SKTexture(imageNamed: "Duck2_6"),
+                                SKTexture(imageNamed: "Duck2_7"),
+                                SKTexture(imageNamed: "Duck2_8"),
+                                SKTexture(imageNamed: "Duck2_7")]
+
+private let flyUp3Animation  = [SKTexture(imageNamed: "Duck3_6"),
+                                SKTexture(imageNamed: "Duck3_7"),
+                                SKTexture(imageNamed: "Duck3_8"),
+                                SKTexture(imageNamed: "Duck3_7")]
+
+private let flyUp1ActionKey = "FlyUp1"
+private let flyUp2ActionKey = "FlyUp2"
+private let flyUp3ActionKey = "FlyUp3"
