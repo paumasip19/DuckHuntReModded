@@ -36,4 +36,16 @@ extension GameScene {
         self.aimSprite.position = CGPoint(x: 300, y: 300)
         self.addChild(self.aimSprite)
     }
+    
+    func getZeroZero(node: SKSpriteNode) -> CGPoint
+    {
+        var point = CGPoint()
+        
+        point.x = node.position.x - node.size.width/2
+        point.y = node.position.y - node.size.height/2
+        
+        return point
+    }
+    
+    
 }

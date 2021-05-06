@@ -17,7 +17,10 @@ struct Duck {
     var flyDiagonalAction: SKAction?
     let flyDiagonalActionKey: String?
     
+    let limitsX: CGPoint
+    let limitsY: CGPoint
     
+    var life: Int
     
     var node: SKSpriteNode!
     
@@ -27,8 +30,13 @@ struct Duck {
         
         self.node?.size = CGSize(width: 120, height: 120)
         self.node.position = duckPosition
-        
         self.node.zPosition = 10
+        
+        //Set Sprite Limits
+        limitsX = CGPoint(x: getZeroZero(node: self.node).x, y: getZeroZero(node: self.node).x + self.node.size.width)
+        limitsY = CGPoint(x: getZeroZero(node: self.node).y, y: getZeroZero(node: self.node).y + self.node.size.height)
+        
+        self.life = 3
         
         //Animation Set
         switch duckType {
@@ -78,6 +86,34 @@ struct Duck {
         
     }
     
+    mutating func checkHit(position: CGPoint) -> Bool
+    {
+        if(isInBounds(limitsX: limitsX, limitsY: limitsY, pos: position))
+        {
+            self.life -= 1
+            
+            if(life == 0)
+            {
+                node.removeFromParent()
+            }
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+    
+}
+
+func getZeroZero(node: SKSpriteNode) -> CGPoint
+{
+    var point = CGPoint()
+    
+    point.x = node.position.x - node.size.width/2
+    point.y = node.position.y - node.size.height/2
+    
+    return point
 }
 
 //Fly Right Animations
