@@ -47,5 +47,20 @@ extension GameScene {
         return point
     }
     
+    func initPoints()
+    {
+        var index = 0
+        for _ in 1...6 {
+            do {
+                addChild(points.nodes[index])
+                index += 1
+            
+                //Change Pos to put in
+                initPos.x += 150
+            }
+        }
+        
+    }
+    
     
 }

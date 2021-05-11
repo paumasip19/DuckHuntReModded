@@ -22,6 +22,8 @@ struct Duck {
     
     var life: Int
     
+    var points: [Int]
+    
     var node: SKSpriteNode!
     
     init(duckType: Int, duckNumber: Int, duckPosition: CGPoint){
@@ -52,6 +54,8 @@ struct Duck {
 
             let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
             self.flyDiagonalAction = SKAction.repeatForever(animation1)
+            
+            points = [0, 0, 1, 0, 0, 0]
 
         case 2:
             self.flyRightAnimation = flyRight2Animation
@@ -66,6 +70,8 @@ struct Duck {
             let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
             self.flyDiagonalAction = SKAction.repeatForever(animation1)
             
+            points = [0, 0, 0, 5, 0, 0]
+
         case 3:
             self.flyRightAnimation = flyRight3Animation
             self.flyRightActionKey = flyRight3ActionKey
@@ -78,6 +84,9 @@ struct Duck {
 
             let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
             self.flyDiagonalAction = SKAction.repeatForever(animation1)
+
+            points = [0, 0, 1, 5, 0, 0]
+
         default:
             fatalError()
         }
@@ -102,6 +111,26 @@ struct Duck {
         {
             return false
         }
+    }
+    
+    func getPoints() -> [Int]
+    {
+        if(life == 0)
+        {
+            return points
+        }
+        
+        return [0, 0, 0, 0, 0, 0]
+    }
+    
+    func isDead() -> Bool
+    {
+        if(life == 0)
+        {
+            return true
+        }
+        
+        return false
     }
     
 }

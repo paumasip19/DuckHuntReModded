@@ -11,6 +11,7 @@
 		CBDA2F852642C3B300DF2C0A /* GameScene+Logic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDA2F842642C3B300DF2C0A /* GameScene+Logic.swift */; };
 		EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0BE929263B206200164974 /* GameScene+Creations.swift */; };
 		EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0BE92C263B285C00164974 /* DuckEnemy.swift */; };
+		EF6B1002264AF34500CC7F3A /* Points.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6B1001264AF34500CC7F3A /* Points.swift */; };
 		EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F062631F6CB00D45033 /* AppDelegate.swift */; };
 		EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F0A2631F6CB00D45033 /* Actions.sks */; };
 		EFE20F0D2631F6CB00D45033 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F0C2631F6CB00D45033 /* GameScene.swift */; };
@@ -24,6 +25,7 @@
 		CBDA2F842642C3B300DF2C0A /* GameScene+Logic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameScene+Logic.swift"; sourceTree = "<group>"; };
 		EF0BE929263B206200164974 /* GameScene+Creations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameScene+Creations.swift"; sourceTree = "<group>"; };
 		EF0BE92C263B285C00164974 /* DuckEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckEnemy.swift; sourceTree = "<group>"; };
+		EF6B1001264AF34500CC7F3A /* Points.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Points.swift; sourceTree = "<group>"; };
 		EFE20F032631F6CB00D45033 /* DuckHunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckHunt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE20F062631F6CB00D45033 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFE20F0A2631F6CB00D45033 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 				CBDA2F842642C3B300DF2C0A /* GameScene+Logic.swift */,
 				EFE20F0E2631F6CB00D45033 /* GameViewController.swift */,
 				EF0BE92C263B285C00164974 /* DuckEnemy.swift */,
+				EF6B1001264AF34500CC7F3A /* Points.swift */,
 				EFE20F102631F6CB00D45033 /* Main.storyboard */,
 				EFE20F132631F6CC00D45033 /* Assets.xcassets */,
 				CBDA2F812642B7AC00DF2C0A /* GameScene.sks */,
@@ -154,6 +157,7 @@
 				EFE20F0F2631F6CB00D45033 /* GameViewController.swift in Sources */,
 				EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */,
 				CBDA2F852642C3B300DF2C0A /* GameScene+Logic.swift in Sources */,
+				EF6B1002264AF34500CC7F3A /* Points.swift in Sources */,
 				EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */,
 				EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */,
 			);
