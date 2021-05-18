@@ -44,10 +44,7 @@ class GameScene: SKScene {
         //Background
         initBackground(number: 0);
         
-        //Enemy Trial
-        /*duck1_1 = Duck(duckType: 1, duckNumber: 0, duckPosition: CGPoint(x: 300, y: 900))
-        duck1_2 = Duck(duckType: 1, duckNumber: 1, duckPosition: CGPoint(x: 600, y: 900))
-        duck1_3 = Duck(duckType: 1, duckNumber: 2, duckPosition: CGPoint(x: 900, y: 900))*/
+        //Enemies Trial
         
         var index = 0
         for _ in 1...6 {
@@ -70,31 +67,6 @@ class GameScene: SKScene {
         //Points
         initPoints()
         
-        
-        
-
-        
-        /*duck2_1 = Duck(duckType: 2, duckNumber: 3, duckPosition: CGPoint(x: 100, y: 200))
-        duck2_2 = Duck(duckType: 2, duckNumber: 4, duckPosition: CGPoint(x: 200, y: 200))
-        duck2_3 = Duck(duckType: 2, duckNumber: 5, duckPosition: CGPoint(x: 300, y: 200))
-        
-        duck3_1 = Duck(duckType: 3, duckNumber: 6, duckPosition: CGPoint(x: 100, y: 300))
-        duck3_2 = Duck(duckType: 3, duckNumber: 7, duckPosition: CGPoint(x: 200, y: 300))
-        duck3_3 = Duck(duckType: 3, duckNumber: 8, duckPosition: CGPoint(x: 300, y: 300))*/
-        
-        
-        /*addChild(duck1_1.node)
-        addChild(duck1_2.node)
-        addChild(duck1_3.node)*/
-        
-        /*addChild(duck2_1.node)
-        addChild(duck2_2.node)
-        addChild(duck2_3.node)
-        
-        addChild(duck3_1.node)
-        addChild(duck3_2.node)
-        addChild(duck3_3.node)*/
-        
         //Aim
         initAim()
     }
@@ -104,6 +76,7 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
+            print(touch.location(in: self))
             if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)))
             {
                 aimSprite.position = touch.location(in: self)
@@ -162,6 +135,17 @@ class GameScene: SKScene {
     
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        for (index, _) in ducks_1.enumerated()
+        {
+            ducks_1[index].shouldKillDuck()
+        }
+        for (index, _) in ducks_2.enumerated()
+        {
+            ducks_2[index].shouldKillDuck()
+        }
+        for (index, _) in ducks_3.enumerated()
+        {
+            ducks_3[index].shouldKillDuck()
+        }
     }
 }

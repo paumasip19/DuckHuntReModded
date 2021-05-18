@@ -17,6 +17,14 @@ struct Duck {
     var flyDiagonalAction: SKAction?
     let flyDiagonalActionKey: String?
     
+    let hurtAnimation: [SKTexture]?
+    var hurtAction: SKAction?
+    let hurtActionKey: String?
+    
+    let deathAnimation: [SKTexture]?
+    var deathAction: SKAction?
+    let deathActionKey: String?
+    
     let limitsX: CGPoint
     let limitsY: CGPoint
     
@@ -46,44 +54,44 @@ struct Duck {
             self.flyRightAnimation = flyRight1Animation
             self.flyRightActionKey = flyRight1ActionKey
 
-            let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
-            self.flyRightAction = SKAction.repeatForever(animation0)
-            
             self.flyDiagonalAnimation = flyDiagonal1Animation
             self.flyDiagonalActionKey = flyDiagonal1ActionKey
-
-            let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
-            self.flyDiagonalAction = SKAction.repeatForever(animation1)
+        
+            self.hurtAnimation = hurt1Animation
+            self.hurtActionKey = hurt1ActionKey
+            
+            self.deathAnimation = death1Animation
+            self.deathActionKey = death1ActionKey
             
             points = [0, 0, 1, 0, 0, 0]
 
         case 2:
             self.flyRightAnimation = flyRight2Animation
             self.flyRightActionKey = flyRight2ActionKey
-
-            let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
-            self.flyRightAction = SKAction.repeatForever(animation0)
             
             self.flyDiagonalAnimation = flyDiagonal2Animation
             self.flyDiagonalActionKey = flyDiagonal2ActionKey
 
-            let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
-            self.flyDiagonalAction = SKAction.repeatForever(animation1)
+            self.hurtAnimation = hurt2Animation
+            self.hurtActionKey = hurt2ActionKey
+            
+            self.deathAnimation = death2Animation
+            self.deathActionKey = death2ActionKey
             
             points = [0, 0, 0, 5, 0, 0]
 
         case 3:
             self.flyRightAnimation = flyRight3Animation
             self.flyRightActionKey = flyRight3ActionKey
-
-            let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
-            self.flyRightAction = SKAction.repeatForever(animation0)
             
             self.flyDiagonalAnimation = flyDiagonal3Animation
             self.flyDiagonalActionKey = flyDiagonal3ActionKey
 
-            let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
-            self.flyDiagonalAction = SKAction.repeatForever(animation1)
+            self.hurtAnimation = hurt3Animation
+            self.hurtActionKey = hurt3ActionKey
+            
+            self.deathAnimation = death3Animation
+            self.deathActionKey = death3ActionKey
 
             points = [0, 0, 1, 5, 0, 0]
 
@@ -91,6 +99,19 @@ struct Duck {
             fatalError()
         }
                 
+        let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
+        self.flyRightAction = SKAction.repeatForever(animation0)
+        
+        let animation1 = SKAction.animate(with: self.flyDiagonalAnimation!, timePerFrame: 0.10)
+        self.flyDiagonalAction = SKAction.repeatForever(animation1)
+        
+        let hurtAnimation = SKAction.animate(with: self.hurtAnimation!, timePerFrame: 0.10)
+        self.hurtAction = SKAction.repeat(hurtAnimation, count: 3)//hurtAnimation
+        
+        let deathAnimation = SKAction.animate(with: self.deathAnimation!, timePerFrame: 0.10)
+        let deathMovement = SKAction.moveBy(x: 0, y: -1000, duration: 2)
+        self.deathAction = SKAction.group([SKAction.repeatForever(deathAnimation), deathMovement])
+        
         self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
         
     }
@@ -103,7 +124,11 @@ struct Duck {
             
             if(life == 0)
             {
-                node.removeFromParent()
+                self.node.run(self.deathAction!, withKey: self.deathActionKey!)
+            }
+            else
+            {
+                self.node.run(self.hurtAction!, withKey: self.hurtActionKey!)
             }
             return true
         }
@@ -131,6 +156,18 @@ struct Duck {
         }
         
         return false
+    }
+    
+    func shouldKillDuck()
+    {
+        if(isDead())
+        {
+            if(node.position.y <= 500)
+            {
+                node.removeFromParent()
+            }
+        }
+        
     }
     
 }
@@ -204,3 +241,21 @@ private let flyUp3Animation  = [SKTexture(imageNamed: "Duck3_6"),
 private let flyUp1ActionKey = "FlyUp1"
 private let flyUp2ActionKey = "FlyUp2"
 private let flyUp3ActionKey = "FlyUp3"
+
+//Hurt Animations
+private let hurt1Animation = [SKTexture(imageNamed: "Duck1_9")]
+private let hurt2Animation  = [SKTexture(imageNamed: "Duck2_9")]
+private let hurt3Animation  = [SKTexture(imageNamed: "Duck3_9")]
+
+private let hurt1ActionKey = "Hurt1"
+private let hurt2ActionKey = "Hurt2"
+private let hurt3ActionKey = "Hurt3"
+
+//Death Animations
+private let death1Animation = [SKTexture(imageNamed: "Duck1_10")]
+private let death2Animation  = [SKTexture(imageNamed: "Duck2_10")]
+private let death3Animation  = [SKTexture(imageNamed: "Duck3_10")]
+
+private let death1ActionKey = "Death1"
+private let death2ActionKey = "Death2"
+private let death3ActionKey = "Death3"
