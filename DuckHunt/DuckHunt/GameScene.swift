@@ -46,16 +46,18 @@ class GameScene: SKScene {
         
         //Enemies Trial
         
+        let direct = CGPoint(x: 1, y: 0)
+        
         var index = 0
         for _ in 1...6 {
             do {
-                ducks_1.append(Duck(duckType: 1, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y)))
+                ducks_1.append(Duck(duckType: 1, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y), dir: direct))
                 addChild(ducks_1[index].node)
                     
-                ducks_2.append(Duck(duckType: 2, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y - 150)))
+                ducks_2.append(Duck(duckType: 2, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y - 150), dir: direct))
                 addChild(ducks_2[index].node)
                     
-                ducks_3.append(Duck(duckType: 3, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y - 300)))
+                ducks_3.append(Duck(duckType: 3, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y - 300), dir: direct))
                 addChild(ducks_3[index].node)
                     
                 index += 1
@@ -76,7 +78,6 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            print(touch.location(in: self))
             if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)))
             {
                 aimSprite.position = touch.location(in: self)
@@ -89,7 +90,9 @@ class GameScene: SKScene {
                         {
                             points.updateScore(pointsAdded: ducks_1[index].getPoints())
                         }
-                    }
+                        ducks_1[0].direction = CGPoint(x: 0, y: 1)
+                        ducks_1[0].changeMovement()
+                    }                   
                 }
                 
                 for (index, _) in ducks_2.enumerated()
@@ -100,6 +103,7 @@ class GameScene: SKScene {
                         {
                             points.updateScore(pointsAdded: ducks_2[index].getPoints())
                         }
+                        
                     }
                 }
                 
@@ -138,14 +142,17 @@ class GameScene: SKScene {
         for (index, _) in ducks_1.enumerated()
         {
             ducks_1[index].shouldKillDuck()
+            ducks_1[index].timerCount()
         }
         for (index, _) in ducks_2.enumerated()
         {
             ducks_2[index].shouldKillDuck()
+            ducks_2[index].timerCount()
         }
         for (index, _) in ducks_3.enumerated()
         {
             ducks_3[index].shouldKillDuck()
+            ducks_3[index].timerCount()
         }
     }
 }
