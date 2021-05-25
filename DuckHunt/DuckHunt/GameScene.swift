@@ -90,8 +90,6 @@ class GameScene: SKScene {
                         {
                             points.updateScore(pointsAdded: ducks_1[index].getPoints())
                         }
-                        ducks_1[0].direction = CGPoint(x: 0, y: 1)
-                        ducks_1[0].changeMovement()
                     }                   
                 }
                 

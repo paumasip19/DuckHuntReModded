@@ -8,7 +8,8 @@
 import GameplayKit
 import SpriteKit
 
-enum MovementType { case RIGHT; case UP; case DIAGONAL_RIGH; case NONE }
+enum MovementType { case RIGHT; case LEFT; case UP; case DOWN;
+    case DIAGONAL_RIGHT; case DIAGONAL_LEFT; case NONE }
 
 struct Duck {
     let flyRightAnimation: [SKTexture]?
@@ -32,8 +33,9 @@ struct Duck {
     let deathActionKey: String?
     
     var direction: CGPoint
+    var originalScale: CGSize
     
-    var movementDirection = MovementType.NONE
+    var movementType = MovementType.NONE
     
     var life: Int
     var speed: CGFloat
@@ -141,29 +143,33 @@ struct Duck {
         self.hurtAction = SKAction.group([SKAction.repeat(hurtAnimation, count: 3), SKAction.repeatForever(movement)])
         
         let deathAnimation = SKAction.animate(with: self.deathAnimation!, timePerFrame: 0.10)
-        let deathMovement = SKAction.moveBy(x: 0, y: -1000, duration: 2)
+        let deathMovement = SKAction.moveBy(x: 0, y: -3000, duration: 6)
         self.deathAction = SKAction.group([SKAction.repeatForever(deathAnimation), deathMovement])
         
         self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
         
+        self.originalScale = CGSize(width: self.node.xScale, height: self.node.yScale)
     }
     
     mutating func checkHit(position: CGPoint) -> Bool
     {
         if(isInBounds(limitsX: CGPoint(x: getZeroZero(node: self.node).x, y: getZeroZero(node: self.node).x + self.node.size.width),
                       limitsY: CGPoint(x: getZeroZero(node: self.node).y, y: getZeroZero(node: self.node).y + self.node.size.height),
-                      pos: position))
+                      pos: position) && !self.isDead())
         {
             self.life -= 1
             
+            self.node.removeAllActions()
+            
             if(life == 0)
             {
-                self.node.removeAllActions()
                 self.node.run(self.deathAction!, withKey: self.deathActionKey!)
+                self.setScale(scale: CGPoint(x: 1, y: 1))
             }
             else
             {
                 self.node.run(self.hurtAction!, withKey: self.hurtActionKey!)
+                self.setScale(scale: CGPoint(x: 1, y: 1))
             }
             return true
         }
@@ -204,19 +210,6 @@ struct Duck {
         }
     }
     
-    func mirrorSpriteArray(array: [SKTexture]) -> [SKTexture] //Revisar la funcion para todos los casos de rotacion
-    {
-        var ar = array
-        for (index, _) in array.enumerated()
-        {
-            let text = SKSpriteNode(texture: array[index])
-            text.scale(to: CGSize(width: -1, height: text.size.height))
-            ar[index] = text.texture!
-        }
-        
-        return ar
-    }
-    
     mutating func randomDirection()
     {
         self.direction = CGPoint(x: Int.random(in: -1...1), y: Int.random(in: -1...1))
@@ -224,8 +217,61 @@ struct Duck {
         {
             self.direction = CGPoint(x: Int.random(in: -1...1), y: Int.random(in: -1...1))
         }
-        
-        print(direction)
+    }
+    
+    mutating func getMovementType()
+    {
+        if(direction.x == 1 && direction.y == 0) { self.movementType = MovementType.RIGHT }
+        else if(direction.x == -1 && direction.y == 0) { self.movementType = MovementType.LEFT }
+        else if(direction.x == 0 && direction.y == 1) { self.movementType = MovementType.UP }
+        else if(direction.x == 0 && direction.y == -1) { self.movementType = MovementType.DOWN }
+        else if(direction.x == 1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_RIGHT }
+        else if(direction.x == -1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_LEFT }
+    }
+    
+    mutating func setScale(scale: CGPoint)
+    {
+        self.node.xScale = self.originalScale.width * scale.x
+        self.node.yScale = self.originalScale.height * scale.y
+    }
+    
+    mutating func makeAndRunAction()
+    {
+        if(!isDead())
+        {
+            let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 1)
+            
+            if(self.movementType == .RIGHT || self.movementType == .LEFT)
+            {
+                let animation0 = SKAction.animate(with: flyRightAnimation!, timePerFrame: 0.10)
+                self.flyRightAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+                
+                self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
+                
+                if(self.movementType == .LEFT) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+                else { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+            }
+            else if(self.movementType == .UP || self.movementType == .DOWN)
+            {
+                let animation0 = SKAction.animate(with: flyUpAnimation!, timePerFrame: 0.10)
+                self.flyUpAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+                
+                self.node.run(self.flyUpAction!, withKey: self.flyUpActionKey!)
+                
+                if(self.movementType == .DOWN) { self.setScale(scale: CGPoint(x: 1, y: -1)) }
+                else { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+            }
+            else if(self.movementType == .DIAGONAL_RIGHT || self.movementType == .DIAGONAL_LEFT)
+            {
+                let animation0 = SKAction.animate(with: flyDiagonalAnimation!, timePerFrame: 0.10)
+                self.flyDiagonalAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+                
+                self.node.run(self.flyDiagonalAction!, withKey: self.flyDiagonalActionKey!)
+                
+                if(self.movementType == .DIAGONAL_LEFT) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+                else { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+            }
+        }
     }
     
     mutating func timerCount()
@@ -241,73 +287,17 @@ struct Duck {
     
     mutating func changeMovement()
     {
-        randomDirection()
-        self.finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
-        let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 1)
-                
-        node.removeAllActions()
-        
-        if(direction.x == 1 && direction.y == 0) //Derecha
+        if(!isDead())
         {
-            let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
-            self.flyRightAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+            randomDirection()
+            self.finalSpeed = CGPoint(x: self.direction.x * self.speed * 10,
+                                      y: self.direction.y * self.speed * 10)
+                    
+            node.removeAllActions()
             
-            self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
+            self.getMovementType()
+            self.makeAndRunAction()
         }
-        else if(direction.x == -1 && direction.y == 0) //Izquierda
-        {
-            let left = mirrorSpriteArray(array: self.flyRightAnimation!)
-            let animation0 = SKAction.animate(with: left, timePerFrame: 0.10)
-            self.flyRightAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            
-            self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
-        }
-        else if(direction.x == 0 && direction.y == 1) //Arriba
-        {
-            let animation0 = SKAction.animate(with: flyUpAnimation!, timePerFrame: 0.10)
-            self.flyUpAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            
-            self.node.run(self.flyUpAction!, withKey: self.flyUpActionKey!)
-        }
-        else if(direction.x == 0 && direction.y == -1) //Abajo
-        {
-            let down = mirrorSpriteArray(array: self.flyUpAnimation!)
-            let animation0 = SKAction.animate(with: down, timePerFrame: 0.10)
-            self.flyUpAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            
-            self.node.run(self.flyUpAction!, withKey: self.flyUpActionKey!)
-        }
-        
-        var diferent = self.flyDiagonalAnimation!
-        
-        if(direction.x == 1 && direction.y == 1) //Arriba - Derecha
-        {
-            let animation0 = SKAction.animate(with: flyDiagonalAnimation!, timePerFrame: 0.10)
-            self.flyDiagonalAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            
-            self.node.run(self.flyDiagonalAction!, withKey: self.flyDiagonalActionKey!)
-        }
-        else if(direction.x == -1 && direction.y == 1) //Arriba - Izquierda
-        {
-            diferent = mirrorSpriteArray(array: self.flyDiagonalAnimation!)
-        }
-        else if(direction.x == 1 && direction.y == -1) //Abajo - Derecha
-        {
-            diferent = mirrorSpriteArray(array: self.flyDiagonalAnimation!)
-        }
-        else if(direction.x == -1 && direction.y == -1) //Abajo - Izquierda
-        {
-            diferent = mirrorSpriteArray(array: self.flyDiagonalAnimation!)
-        }
-        
-        if(direction.x != 0 && direction.y != 0)
-        {
-            let animation0 = SKAction.animate(with: diferent, timePerFrame: 0.10)
-            self.flyDiagonalAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            
-            self.node.run(self.flyDiagonalAction!, withKey: self.flyDiagonalActionKey!)
-        }
-
     }
 }
 
