@@ -8,10 +8,12 @@
 import GameplayKit
 import SpriteKit
 
-enum MovementType { case RIGHT; case LEFT; case UP; case DOWN;
-    case DIAGONAL_RIGHT; case DIAGONAL_LEFT; case NONE }
+enum MovementType:Int { case RIGHT = 0; case UP = 1; case DIAGONAL_RIGHT_UP = 2; case DIAGONAL_LEFT_UP = 3;
+    case LEFT = 4; case DOWN = 5; case DIAGONAL_RIGHT_DOWN = 6; case DIAGONAL_LEFT_DOWN = 7; case NONE = 8 }
 
 struct Duck {
+    let duckIndex: Int
+    
     let flyRightAnimation: [SKTexture]?
     var flyRightAction: SKAction?
     let flyRightActionKey: String?
@@ -32,30 +34,60 @@ struct Duck {
     var deathAction: SKAction?
     let deathActionKey: String?
     
+    var firstAnimation: [SKTexture]?
+    var firstAction: SKAction?
+    var firstActionKey: String?
+    
+    let gameLimitsX: CGPoint
+    let gameLimitsY: CGPoint
+    
     var direction: CGPoint
     var originalScale: CGSize
     
     var movementType = MovementType.NONE
+    var canMove: Bool
     
     var life: Int
     var speed: CGFloat
+    var generalSpeed: CGFloat
     var finalSpeed: CGPoint
     
     var points: [Int]
     
     var timer = 0
     
+    var initialPos: CGPoint
+    var eneterPoint: CGPoint
+    
+    var lastPos: CGPoint
+    
     var node: SKSpriteNode!
     
-    init(duckType: Int, duckNumber: Int, duckPosition: CGPoint, dir: CGPoint){
+    init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint){
         //Basics
         self.node = SKSpriteNode(imageNamed: "Duck" + String(duckType) + "_" + String(duckNumber))
         
+        self.duckIndex = duckNumber
+        
+        let initPositionIndex = Int.random(in: 0...2)
+        initialPos = initialDuckPositions[initPositionIndex]
+        
+        self.gameLimitsX = gLimX
+        self.gameLimitsY = gLimY
+        
+        self.canMove = false
+        
         self.node?.size = CGSize(width: 120, height: 120)
-        self.node.position = duckPosition
+        self.node.position = initialPos
         self.node.zPosition = 10
         
+        self.lastPos = self.node.position
+        
         self.direction = dir
+        
+        self.eneterPoint = duckEnterPoint()
+        
+        self.generalSpeed = 5
         
         //Animation Set
         switch duckType {
@@ -76,7 +108,7 @@ struct Duck {
             self.deathActionKey = death1ActionKey
             
             self.life = 2
-            self.speed = 1
+            self.speed = 1 * self.generalSpeed
             
             points = [0, 0, 1, 0, 0, 0]
 
@@ -97,7 +129,7 @@ struct Duck {
             self.deathActionKey = death2ActionKey
             
             self.life = 1
-            self.speed = 2
+            self.speed = 2 * self.generalSpeed
             
             points = [0, 0, 0, 5, 0, 0]
 
@@ -118,7 +150,7 @@ struct Duck {
             self.deathActionKey = death3ActionKey
 
             self.life = 2
-            self.speed = 2
+            self.speed = 2 * self.generalSpeed
             
             points = [0, 0, 1, 5, 0, 0]
 
@@ -129,6 +161,8 @@ struct Duck {
         self.finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
         
         let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 1)
+        
+        
                 
         let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
         self.flyRightAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
@@ -149,6 +183,78 @@ struct Duck {
         self.node.run(self.flyRightAction!, withKey: self.flyRightActionKey!)
         
         self.originalScale = CGSize(width: self.node.xScale, height: self.node.yScale)
+        
+        node.removeAllActions()
+        
+        self.setFirstAnimation(duckType: duckType, initPositionIndex: initPositionIndex)
+    }
+    
+    mutating func setFirstAnimation(duckType: Int, initPositionIndex: Int)
+    {
+        self.firstActionKey = "First"
+
+        let movement = SKAction.move(to: self.eneterPoint, duration: 1)
+        var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
+        
+        if(duckType == 1)
+        {
+            if(initPositionIndex == 0 || initPositionIndex == 2)
+            {
+                self.firstAnimation = flyRight1Animation
+                self.firstActionKey! += flyRightActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
+            }
+            else if(initPositionIndex == 1)
+            {
+                self.firstAnimation = flyUp1Animation
+                self.firstActionKey! += flyUpActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyUpAnimation!, timePerFrame: 0.05)
+            }
+        }
+        else if(duckType == 2)
+        {
+            if(initPositionIndex == 0 || initPositionIndex == 2)
+            {
+                self.firstAnimation = flyRight2Animation
+                self.firstActionKey! += flyRightActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
+            }
+            else if(initPositionIndex == 1)
+            {
+                self.firstAnimation = flyUp2Animation
+                self.firstActionKey! += flyUpActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyUpAnimation!, timePerFrame: 0.05)
+            }
+        }
+        else if(duckType == 3)
+        {
+            if(initPositionIndex == 0 || initPositionIndex == 2)
+            {
+                self.firstAnimation = flyRight3Animation
+                self.firstActionKey! += flyRightActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
+            }
+            else if(initPositionIndex == 1)
+            {
+                self.firstAnimation = flyUp3Animation
+                self.firstActionKey! += flyUpActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyUpAnimation!, timePerFrame: 0.05)
+            }
+        }
+        
+        self.firstAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+        
+        self.node.run(self.firstAction!, withKey: self.firstActionKey!)
+        
+        if(initPositionIndex == 0) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+        else if(initPositionIndex == 2) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+        else if(initPositionIndex == 1) { self.setScale(scale: CGPoint(x: 1, y: -1)) }
     }
     
     mutating func checkHit(position: CGPoint) -> Bool
@@ -217,6 +323,8 @@ struct Duck {
         {
             self.direction = CGPoint(x: Int.random(in: -1...1), y: Int.random(in: -1...1))
         }
+        
+        
     }
     
     mutating func getMovementType()
@@ -225,8 +333,22 @@ struct Duck {
         else if(direction.x == -1 && direction.y == 0) { self.movementType = MovementType.LEFT }
         else if(direction.x == 0 && direction.y == 1) { self.movementType = MovementType.UP }
         else if(direction.x == 0 && direction.y == -1) { self.movementType = MovementType.DOWN }
-        else if(direction.x == 1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_RIGHT }
-        else if(direction.x == -1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_LEFT }
+        else if(direction.x == 1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_RIGHT_UP }
+        else if(direction.x == -1 && direction.y == 1) { self.movementType = MovementType.DIAGONAL_LEFT_UP }
+        else if(direction.x == 1 && direction.y == -1) { self.movementType = MovementType.DIAGONAL_RIGHT_DOWN }
+        else if(direction.x == -1 && direction.y == -1) { self.movementType = MovementType.DIAGONAL_LEFT_DOWN }
+    }
+    
+    mutating func getDirection()
+    {
+        if(self.movementType == MovementType.RIGHT) { self.direction = CGPoint(x: 1, y: 0) }
+        else if(self.movementType == MovementType.LEFT) { self.direction = CGPoint(x: -1, y: 0) }
+        else if(self.movementType == MovementType.UP) { self.direction = CGPoint(x: 0, y: 1) }
+        else if(self.movementType == MovementType.DOWN) { self.direction = CGPoint(x: 0, y: -1) }
+        else if(self.movementType == MovementType.DIAGONAL_RIGHT_UP) { self.direction = CGPoint(x: 1, y: 1) }
+        else if(self.movementType == MovementType.DIAGONAL_LEFT_UP) { self.direction = CGPoint(x: -1, y: 1) }
+        else if(self.movementType == MovementType.DIAGONAL_RIGHT_DOWN) { self.direction = CGPoint(x: 1, y: -1) }
+        else if(self.movementType == MovementType.DIAGONAL_LEFT_DOWN) { self.direction = CGPoint(x: -1, y: -1) }
     }
     
     mutating func setScale(scale: CGPoint)
@@ -261,30 +383,53 @@ struct Duck {
                 if(self.movementType == .DOWN) { self.setScale(scale: CGPoint(x: 1, y: -1)) }
                 else { self.setScale(scale: CGPoint(x: 1, y: 1)) }
             }
-            else if(self.movementType == .DIAGONAL_RIGHT || self.movementType == .DIAGONAL_LEFT)
+            else if(self.movementType == .DIAGONAL_RIGHT_UP || self.movementType == .DIAGONAL_LEFT_UP ||
+                    self.movementType == .DIAGONAL_RIGHT_DOWN || self.movementType == .DIAGONAL_LEFT_DOWN)
             {
                 let animation0 = SKAction.animate(with: flyDiagonalAnimation!, timePerFrame: 0.10)
                 self.flyDiagonalAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
                 
                 self.node.run(self.flyDiagonalAction!, withKey: self.flyDiagonalActionKey!)
                 
-                if(self.movementType == .DIAGONAL_LEFT) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
-                else { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+                if(self.movementType == .DIAGONAL_LEFT_UP || self.movementType == .DIAGONAL_LEFT_DOWN) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+                else if(self.movementType == .DIAGONAL_RIGHT_UP || self.movementType == .DIAGONAL_RIGHT_DOWN){ self.setScale(scale: CGPoint(x: 1, y: 1)) }
             }
+        }
+    }
+    
+    func isIn(limitsX: CGPoint, limitsY: CGPoint) -> Bool
+    {
+        if(self.node.position.x < limitsX.y && self.node.position.x > limitsX.x &&
+           self.node.position.y < limitsY.y && self.node.position.y > limitsY.x)
+        {
+            return true
+        }
+        else
+        {
+            return false
         }
     }
     
     mutating func timerCount()
     {
         timer += 10
-        //print(timer)
         
-        if(timer % 600 == 0)
+        if(timer % 400 == 0 /*&& !self.waitForIt*/)
         {
+            if(!self.canMove) { self.canMove = true; }
             changeMovement()
         }
+        else if(!self.isIn(limitsX: gameLimitsX, limitsY: gameLimitsY) && self.canMove)
+        {
+            self.node.position = self.lastPos
+            contraryMovement()
+        }
+        else
+        {
+            self.lastPos = self.node.position
+        }
     }
-    
+        
     mutating func changeMovement()
     {
         if(!isDead())
@@ -292,10 +437,45 @@ struct Duck {
             randomDirection()
             self.finalSpeed = CGPoint(x: self.direction.x * self.speed * 10,
                                       y: self.direction.y * self.speed * 10)
-                    
+  
             node.removeAllActions()
             
             self.getMovementType()
+            self.makeAndRunAction()
+        }
+    }
+    
+    mutating func contraryMovement()
+    {
+        if(!isDead())
+        {
+            var index = 0
+            
+            for _ in 1...8 {
+                do {
+                    if(MovementType.RawValue(index) == self.movementType.rawValue)
+                    {
+                        break
+                    }
+                    index += 1
+                }
+            }
+            
+            if(self.movementType.rawValue < 4)
+            {
+                self.movementType = MovementType(rawValue: self.movementType.rawValue + 4)!
+            }
+            else { self.movementType = MovementType(rawValue: self.movementType.rawValue - 4)! }
+            
+            self.getDirection()
+            
+            self.finalSpeed = CGPoint(x: self.direction.x * self.speed * 10,
+                                      y: self.direction.y * self.speed * 10)
+            
+            //self.node.position.x = self.node.position.x + self.direction.x * 20
+            //self.node.position.y = self.node.position.y + self.direction.y * 20
+            
+            node.removeAllActions()
             self.makeAndRunAction()
         }
     }
@@ -310,6 +490,16 @@ func getZeroZero(node: SKSpriteNode) -> CGPoint
     
     return point
 }
+
+func duckEnterPoint() -> CGPoint
+{
+    let point = CGPoint(x: Int.random(in: 187...526), y: Int.random(in: 426...853))
+    return point
+}
+
+private let initialDuckPositions = [CGPoint(x: -100, y: 640),
+                                    CGPoint(x: 375, y: 1100),
+                                    CGPoint(x: 850, y: 640)]
 
 //Fly Right Animations
 private let flyRight1Animation = [SKTexture(imageNamed: "Duck1_0"),

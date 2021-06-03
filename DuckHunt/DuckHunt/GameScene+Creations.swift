@@ -21,7 +21,7 @@ extension GameScene {
                                  height: bgSize.height * 3)
         background.anchorPoint = CGPoint(x: 0, y: 0)
         background.position = CGPoint(x: 0, y: UIScreen.main.bounds.height/2+50)
-        print(background.position)
+        //print(background.position)
         background.zPosition = -1
         addChild(background)
     }

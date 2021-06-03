@@ -17,20 +17,36 @@ struct Round {
     
     var startRound = false
     
-    var ducks: [Duck]
+    var initPos = [CGPoint]()
     
-    /*init() {
+    var ducks = [Duck]()
+    
+    let gameLimitsX: CGPoint
+    let gameLimitsY: CGPoint
+    
+    init(gLimX: CGPoint, gLimY: CGPoint) {
+        self.gameLimitsX = gLimX
+        self.gameLimitsY = gLimY
+        
+        spawnDucks()
+    }
+    
+    mutating func spawnDucks()
+    {
+        //ducks.append(Duck(duckType: 1, duckNumber: 0, dir: CGPoint(x: 1, y: 0)))
         var index = 0
-        for _ in 1...6 {
+        for _ in 1...10 {
             do {
-                
-                
-               /* ducks.append(Duck(duckType: 1, duckNumber: duckIndex, duckPosition: CGPoint(x: initPos.x + 150, y: initPos.y)))
-    
-                index += 1
-            
-                initPos.x += 150*/
+                let random = Int.random(in: 1...3)
+                ducks.append(Duck(duckType: random, duckNumber: index, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY))
+                index = index + 1
             }
         }
-    }*/
+    }
+    
+    mutating func removeAllDucks()
+    {
+        ducks.removeAll()
+    }
+    
 }
