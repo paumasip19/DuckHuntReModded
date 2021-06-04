@@ -95,7 +95,11 @@ class GameScene: SKScene {
         for (index, _) in roundManager.ducks.enumerated()
         {
             roundManager.ducks[index].shouldKillDuck()
-            roundManager.ducks[index].timerCount()
+            roundManager.ducks[index].movementLogic()
+            if(roundManager.nextRound())
+            {
+                addDucks()
+            }
         }
     }
 }

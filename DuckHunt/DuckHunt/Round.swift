@@ -15,7 +15,7 @@ struct Round {
     var roundType = RoundType.NORMAL
     var roundIndex = 0
     
-    var startRound = false
+    var ducksAlive = 2
     
     var initPos = [CGPoint]()
     
@@ -33,9 +33,8 @@ struct Round {
     
     mutating func spawnDucks()
     {
-        //ducks.append(Duck(duckType: 1, duckNumber: 0, dir: CGPoint(x: 1, y: 0)))
         var index = 0
-        for _ in 1...10 {
+        for _ in 1...2 {
             do {
                 let random = Int.random(in: 1...3)
                 ducks.append(Duck(duckType: random, duckNumber: index, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY))
@@ -44,9 +43,51 @@ struct Round {
         }
     }
     
-    mutating func removeAllDucks()
+    mutating func nextRound() -> Bool
     {
-        ducks.removeAll()
+        if(ducks.count != 0)
+        {
+            ducksAlive = 0
+            var index = 0
+            for _ in 1...2 {
+                do {
+                    if(ducks[index].endRound && ducks [index].node.position == ducks[index].initialPos)
+                    {
+                        removeDucks()
+                        ducks.removeAll()
+                        spawnDucks()
+                        ducksAlive = 2
+                        return true
+                    }
+                    else if(ducks[index].node.parent != nil)
+                    {
+                        ducksAlive += 1
+                    }
+                    index += 1
+                }
+            }
+        }
+        
+        if(ducksAlive == 0)
+        {
+            ducks.removeAll()
+            spawnDucks()
+            ducksAlive = 0
+            return true
+        }
+        
+        return false
+    }
+    
+    mutating func removeDucks()
+    {
+        var index = 0
+        for _ in 1...2 {
+            do {
+                ducks[index].node.removeFromParent()
+                index += 1
+            }
+        }
     }
     
 }

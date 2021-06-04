@@ -13,6 +13,7 @@ enum MovementType:Int { case RIGHT = 0; case UP = 1; case DIAGONAL_RIGHT_UP = 2;
 
 struct Duck {
     let duckIndex: Int
+    let duckType: Int
     
     let flyRightAnimation: [SKTexture]?
     var flyRightAction: SKAction?
@@ -61,13 +62,19 @@ struct Duck {
     
     var lastPos: CGPoint
     
+    var timeOut: Int
+    var endRound: Bool
+    
     var node: SKSpriteNode!
     
     init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint){
         //Basics
         self.node = SKSpriteNode(imageNamed: "Duck" + String(duckType) + "_" + String(duckNumber))
         
+        self.duckType = duckType
         self.duckIndex = duckNumber
+        self.timeOut = 10
+        self.endRound = false
         
         let initPositionIndex = Int.random(in: 0...2)
         initialPos = initialDuckPositions[initPositionIndex]
@@ -186,14 +193,22 @@ struct Duck {
         
         node.removeAllActions()
         
-        self.setFirstAnimation(duckType: duckType, initPositionIndex: initPositionIndex)
+        self.setInOutAnimation(duckType: duckType, initPositionIndex: initPositionIndex, enter: true)
     }
     
-    mutating func setFirstAnimation(duckType: Int, initPositionIndex: Int)
+    mutating func setInOutAnimation(duckType: Int, initPositionIndex: Int, enter: Bool)
     {
-        self.firstActionKey = "First"
+        var movement = SKAction.move(to: self.eneterPoint, duration: 1)
+        
+        if(enter) { self.firstActionKey = "First" }
+        else
+        {
+            self.firstActionKey = "Last"
+            movement = SKAction.move(to: self.initialPos, duration: 1)
+        }
+        
 
-        let movement = SKAction.move(to: self.eneterPoint, duration: 1)
+        
         var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
         if(duckType == 1)
@@ -252,9 +267,19 @@ struct Duck {
         
         self.node.run(self.firstAction!, withKey: self.firstActionKey!)
         
-        if(initPositionIndex == 0) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
-        else if(initPositionIndex == 2) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
-        else if(initPositionIndex == 1) { self.setScale(scale: CGPoint(x: 1, y: -1)) }
+        if(enter)
+        {
+            if(initPositionIndex == 0) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+            else if(initPositionIndex == 2) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+            else if(initPositionIndex == 1) { self.setScale(scale: CGPoint(x: 1, y: -1)) }
+        }
+        else
+        {
+            if(initPositionIndex == 0) { self.setScale(scale: CGPoint(x: -1, y: 1)) }
+            else if(initPositionIndex == 2) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+            else if(initPositionIndex == 1) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
+        }
+        
     }
     
     mutating func checkHit(position: CGPoint) -> Bool
@@ -410,16 +435,18 @@ struct Duck {
         }
     }
     
-    mutating func timerCount()
+    mutating func movementLogic()
     {
         timer += 10
         
-        if(timer % 400 == 0 /*&& !self.waitForIt*/)
+        print(timer / 700)
+        
+        if(timer % 400 == 0 && !self.endRound)
         {
             if(!self.canMove) { self.canMove = true; }
             changeMovement()
         }
-        else if(!self.isIn(limitsX: gameLimitsX, limitsY: gameLimitsY) && self.canMove)
+        else if(!self.isIn(limitsX: gameLimitsX, limitsY: gameLimitsY) && self.canMove && !self.endRound)
         {
             self.node.position = self.lastPos
             contraryMovement()
@@ -428,6 +455,33 @@ struct Duck {
         {
             self.lastPos = self.node.position
         }
+        
+        if(timer % (700 * self.timeOut) == 0 && !self.isDead() && !self.endRound)
+        {
+            self.setInOutAnimation(duckType: self.duckType, initPositionIndex: self.getInitPosIndex(), enter: false)
+            self.endRound = true
+        }
+        
+        /*if(self.node.position == self.initialPos && self.endRound)
+        {
+            self.node.removeFromParent() //No borra el node
+        }*/
+    }
+    
+    func getInitPosIndex() -> Int
+    {
+        var index = 0
+        for _ in 1...3 {
+            do {
+                if(self.initialPos == initialDuckPositions[index])
+                {
+                    return index
+                }
+                index += 1
+            }
+        }
+        
+        return index
     }
         
     mutating func changeMovement()

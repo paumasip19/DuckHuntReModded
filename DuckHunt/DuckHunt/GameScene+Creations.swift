@@ -21,9 +21,25 @@ extension GameScene {
                                  height: bgSize.height * 3)
         background.anchorPoint = CGPoint(x: 0, y: 0)
         background.position = CGPoint(x: 0, y: UIScreen.main.bounds.height/2+50)
-        //print(background.position)
         background.zPosition = -1
         addChild(background)
+        
+        let black1 = SKSpriteNode(imageNamed: "Black")
+        let bkSize = black1.size
+        black1.size = CGSize(width: bkSize.width / 3,
+                                 height: bkSize.height / 5)
+        black1.anchorPoint = CGPoint(x: 0, y: 0)
+        black1.position = CGPoint(x: 0, y: 1000)
+        black1.zPosition = 10000
+        addChild(black1)
+        
+        let black2 = SKSpriteNode(imageNamed: "Black")
+        black2.size = CGSize(width: bkSize.width / 3,
+                                 height: bkSize.height / 5)
+        black2.anchorPoint = CGPoint(x: 0, y: 0)
+        black2.position = CGPoint(x: 0, y: -100)
+        black2.zPosition = 10000
+        addChild(black2)
     }
     
     func initAim()
