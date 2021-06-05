@@ -26,14 +26,14 @@ class GameScene: SKScene {
     
     var inChecker = 0
     
+    
+    
     override func didMove(to _: SKView) {
-        //Background
-        initBackground(number: 0);
-        
         //Enemies
         roundManager = Round(gLimX: gameLimitsX, gLimY: gameLimitsY)
-        addDucks()
-       
+        
+        //Background
+        initBackground(number: roundManager.backgroundIndex);
         
         //Points
         initPoints()
@@ -41,7 +41,6 @@ class GameScene: SKScene {
         //Aim
         initAim()
     }
-    
     
     func addDucks(){
         for (index, _) in roundManager.ducks.enumerated()
@@ -92,13 +91,32 @@ class GameScene: SKScene {
     
     
     override func update(_ currentTime: TimeInterval) {
+        
+        var roundResult = roundManager.nextRound()
         for (index, _) in roundManager.ducks.enumerated()
         {
-            roundManager.ducks[index].shouldKillDuck()
-            roundManager.ducks[index].movementLogic()
-            if(roundManager.nextRound())
+            if(roundResult == 2) //Sigue jugando
             {
-                addDucks()
+                roundManager.ducks[index].shouldKillDuck()
+                roundManager.ducks[index].movementLogic()
+            }
+        }
+        
+        if(roundResult == 0) //Spawnea patos
+        {
+            roundManager.billboard.removeFromParent()
+            roundManager.roundSprite[0].removeFromParent()
+            roundManager.roundSprite[1].removeFromParent()
+            roundManager.billboardOn = false
+            addDucks()
+            roundResult = -1
+        }
+        else if(roundResult == 1) //Muestra ronda
+        {
+            if(!roundManager.billboardOn)
+            {
+                initRoundNumber()
+                roundManager.billboardOn = true
             }
         }
     }

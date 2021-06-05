@@ -9,9 +9,6 @@ import GameplayKit
 import SpriteKit
 
 extension GameScene {
-    
-    
-    
     func initBackground(number: Int)
     {
         //childNode(withName: "Background" + String(number)).removeFromParent()
@@ -75,8 +72,56 @@ extension GameScene {
                 initPos.x += 150
             }
         }
-        
     }
     
+    func initRoundNumber()
+    {
+        roundManager.billboard.name = "Billboard"
+        let bSize = roundManager.billboard.size
+        roundManager.billboard.size = CGSize(width: bSize.width,
+                                 height: bSize.height)
+        roundManager.billboard.anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.billboard.position = CGPoint(x: 375 - bSize.width/2, y: 700)
+        roundManager.billboard.zPosition = 100
+        addChild(roundManager.billboard)
+        
+        //
+        
+        
+        roundManager.roundSprite[0] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[0]))
+        roundManager.roundSprite[0].name = "RoundSprite_0"
+        roundManager.roundSprite[0].size = CGSize(width: 24 * 1.2, height: 25 * 1.2)
+        roundManager.roundSprite[0].anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.roundSprite[0].position = CGPoint(x: 348 , y: 717)
+        roundManager.roundSprite[0].zPosition = 105
+        addChild(roundManager.roundSprite[0])
+        
+        roundManager.roundSprite[1] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[1]))
+        roundManager.roundSprite[1].name = "RoundSprite_0"
+        roundManager.roundSprite[1].size = CGSize(width: roundManager.roundSprite[0].size.width,
+                                                  height: roundManager.roundSprite[0].size.height)
+        roundManager.roundSprite[1].anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.roundSprite[1].position = CGPoint(x: roundManager.roundSprite[0].position.x + roundManager.roundSprite[0].size.width, y: roundManager.roundSprite[0].position.y)
+        roundManager.roundSprite[1].zPosition = 105
+        addChild(roundManager.roundSprite[1])
+        
+        if(roundManager.roundNumbers[0] != 0 &&
+           roundManager.roundNumbers[1] == 0)
+        {
+            initBackground(number: roundManager.backgroundIndex);
+        }
+        
+        if(roundManager.roundNumbers[1] == 9)
+        {
+            roundManager.roundNumbers[1] = 0
+            roundManager.roundNumbers[0] += 1
+            if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
+            else if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
+        }
+        else
+        {
+            roundManager.roundNumbers[1] += 1
+        }
+    }
     
 }

@@ -13,7 +13,18 @@ enum RoundType { case NORMAL; case COINS; case BOSS }
 struct Round {
     
     var roundType = RoundType.NORMAL
-    var roundIndex = 0
+    
+    var timer = 0
+    
+    var billboardFlags = [false, false]
+    
+    var billboard = SKSpriteNode(imageNamed: "Billboard")
+    var roundSprite = [SKSpriteNode(imageNamed: "Points_0"),
+                       SKSpriteNode(imageNamed: "Points_0")]
+    var billboardOn = false
+    var roundNumbers = [0, 1]
+    
+    var backgroundIndex = 0
     
     var ducksAlive = 2
     
@@ -23,6 +34,8 @@ struct Round {
     
     let gameLimitsX: CGPoint
     let gameLimitsY: CGPoint
+    
+    let timeBetweenRounds = 3
     
     init(gLimX: CGPoint, gLimY: CGPoint) {
         self.gameLimitsX = gLimX
@@ -43,8 +56,10 @@ struct Round {
         }
     }
     
-    mutating func nextRound() -> Bool
+    mutating func nextRound() -> Int
     {
+        
+        
         if(ducks.count != 0)
         {
             ducksAlive = 0
@@ -55,9 +70,9 @@ struct Round {
                     {
                         removeDucks()
                         ducks.removeAll()
-                        spawnDucks()
-                        ducksAlive = 2
-                        return true
+                        billboardFlags[0] = true
+                        timer = 0
+                        break
                     }
                     else if(ducks[index].node.parent != nil)
                     {
@@ -66,17 +81,42 @@ struct Round {
                     index += 1
                 }
             }
+            
+            if(ducksAlive == 0)
+            {
+                ducks.removeAll()
+                billboardFlags[0] = true
+                timer = 0
+            }
         }
         
-        if(ducksAlive == 0)
+        if(ducks.count == 0)
         {
-            ducks.removeAll()
-            spawnDucks()
-            ducksAlive = 0
-            return true
+            if(billboardFlags[0])
+            {
+                timer += 10
+                
+                print(timer / 700)
+                
+                if(timer % (700 * timeBetweenRounds) == 0)
+                {
+                    timer = 0
+                    billboardFlags[0] = false
+                    billboardFlags[1] = true
+                }
+            }
+            if(billboardFlags[1])
+            {
+                spawnDucks()
+                ducksAlive = 2
+                billboardFlags[1] = false
+                return 0
+            }
+            
+            return 1
         }
         
-        return false
+        return 2
     }
     
     mutating func removeDucks()
@@ -89,5 +129,4 @@ struct Round {
             }
         }
     }
-    
 }

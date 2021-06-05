@@ -439,7 +439,7 @@ struct Duck {
     {
         timer += 10
         
-        print(timer / 700)
+        //print(timer / 700)
         
         if(timer % 400 == 0 && !self.endRound)
         {
