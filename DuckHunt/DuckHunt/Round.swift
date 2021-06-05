@@ -40,6 +40,9 @@ struct Round {
     var extraLife = 0.0
     var extraSpeed = 1.0
     
+    var playerHealth = 5
+    var playerMistakes = 10
+    
     let gameLimitsX: CGPoint
     let gameLimitsY: CGPoint
     
