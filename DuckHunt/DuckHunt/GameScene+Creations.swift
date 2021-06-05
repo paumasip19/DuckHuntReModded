@@ -85,9 +85,6 @@ extension GameScene {
         roundManager.billboard.zPosition = 100
         addChild(roundManager.billboard)
         
-        //
-        
-        
         roundManager.roundSprite[0] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[0]))
         roundManager.roundSprite[0].name = "RoundSprite_0"
         roundManager.roundSprite[0].size = CGSize(width: 24 * 1.2, height: 25 * 1.2)
@@ -111,17 +108,46 @@ extension GameScene {
             initBackground(number: roundManager.backgroundIndex);
         }
         
+        if(roundManager.roundNumbers[1] == 5)
+        {
+            roundManager.increaseLifeAndSpeed()
+        }
+        
         if(roundManager.roundNumbers[1] == 9)
         {
             roundManager.roundNumbers[1] = 0
             roundManager.roundNumbers[0] += 1
-            if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
-            else if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
+            if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
+            else if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
         }
         else
         {
             roundManager.roundNumbers[1] += 1
         }
     }
+    
+    func initBullets(num: Int)
+    {
+        roundManager.bulletsSprite[0].removeFromParent()
+        roundManager.bulletsSprite[1].removeFromParent()
+        
+        roundManager.bulletsSprite[0] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.bullets[0]))
+        roundManager.bulletsSprite[0].name = "Bullets_0"
+        roundManager.bulletsSprite[0].size = CGSize(width: 22, height: 23)
+        roundManager.bulletsSprite[0].anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.bulletsSprite[0].position = CGPoint(x: 86 , y: 362)
+        roundManager.bulletsSprite[0].zPosition = 105
+        addChild(roundManager.bulletsSprite[0])
+        
+        roundManager.bulletsSprite[1] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.bullets[1]))
+        roundManager.bulletsSprite[1].name = "Bullets_1"
+        roundManager.bulletsSprite[1].size = CGSize(width: roundManager.bulletsSprite[0].size.width,
+                                                    height: roundManager.bulletsSprite[0].size.height)
+        roundManager.bulletsSprite[1].anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.bulletsSprite[1].position = CGPoint(x: roundManager.bulletsSprite[0].position.x + roundManager.bulletsSprite[0].size.width, y: roundManager.bulletsSprite[0].position.y)
+        roundManager.bulletsSprite[1].zPosition = 105
+        addChild(roundManager.bulletsSprite[1])
+    }
+    
     
 }

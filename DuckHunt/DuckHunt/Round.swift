@@ -26,11 +26,19 @@ struct Round {
     
     var backgroundIndex = 0
     
+    var bullets = [0, 0]
+    var bulletsSprite = [SKSpriteNode(imageNamed: "Points_0"),
+                         SKSpriteNode(imageNamed: "Points_0")]
+    var numBullets = 0
+    
     var ducksAlive = 2
     
     var initPos = [CGPoint]()
     
     var ducks = [Duck]()
+    
+    var extraLife = 0.0
+    var extraSpeed = 1.0
     
     let gameLimitsX: CGPoint
     let gameLimitsY: CGPoint
@@ -47,19 +55,46 @@ struct Round {
     mutating func spawnDucks()
     {
         var index = 0
+        var num = 0
         for _ in 1...2 {
             do {
                 let random = Int.random(in: 1...3)
-                ducks.append(Duck(duckType: random, duckNumber: index, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY))
+                ducks.append(Duck(duckType: random, duckNumber: index, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: CGFloat(extraSpeed), extraLife: CGFloat(extraLife)))
+                
+                num += ducks[index].life
+                
                 index = index + 1
             }
         }
+        
+        num *= 2
+        calculateBullets(num: num)
+        numBullets = num
+    }
+    
+    mutating func calculateBullets(num: Int)
+    {
+        if(num < 10)
+        {
+            bullets[0] = 0
+            bullets[1] = num
+        }
+        else
+        {
+            bullets[1] = num % 10;
+            bullets[0] = (num - bullets[1])
+            bullets[0] /= 10;
+        }
+    }
+    
+    mutating func shootBullet()
+    {
+        numBullets -= 1
+        calculateBullets(num: numBullets)
     }
     
     mutating func nextRound() -> Int
     {
-        
-        
         if(ducks.count != 0)
         {
             ducksAlive = 0
@@ -128,5 +163,11 @@ struct Round {
                 index += 1
             }
         }
+    }
+    
+    mutating func increaseLifeAndSpeed()
+    {
+        self.extraLife += 1
+        self.extraSpeed += 0.25
     }
 }

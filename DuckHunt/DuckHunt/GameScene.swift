@@ -52,10 +52,13 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            print(touch.location(in: self))
-            if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)))
+            //print(touch.location(in: self))
+            if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)) && roundManager.numBullets > 0 && !roundManager.billboardFlags[0])
             {
                 aimSprite.position = touch.location(in: self)
+                
+                roundManager.shootBullet()
+                initBullets(num: roundManager.numBullets)
                 
                 for (index, _) in roundManager.ducks.enumerated()
                 {
@@ -109,6 +112,7 @@ class GameScene: SKScene {
             roundManager.roundSprite[1].removeFromParent()
             roundManager.billboardOn = false
             addDucks()
+            initBullets(num: roundManager.numBullets)
             roundResult = -1
         }
         else if(roundResult == 1) //Muestra ronda

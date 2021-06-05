@@ -67,7 +67,8 @@ struct Duck {
     
     var node: SKSpriteNode!
     
-    init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint){
+    init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint, extraSpeed: CGFloat,
+         extraLife: CGFloat){
         //Basics
         self.node = SKSpriteNode(imageNamed: "Duck" + String(duckType) + "_" + String(duckNumber))
         
@@ -94,7 +95,7 @@ struct Duck {
         
         self.eneterPoint = duckEnterPoint()
         
-        self.generalSpeed = 5
+        self.generalSpeed = 10
         
         //Animation Set
         switch duckType {
@@ -114,8 +115,8 @@ struct Duck {
             self.deathAnimation = death1Animation
             self.deathActionKey = death1ActionKey
             
-            self.life = 2
-            self.speed = 1 * self.generalSpeed
+            self.life = 2 + Int(extraLife)
+            self.speed = 1 * self.generalSpeed * extraSpeed
             
             points = [0, 0, 1, 0, 0, 0]
 
@@ -135,8 +136,8 @@ struct Duck {
             self.deathAnimation = death2Animation
             self.deathActionKey = death2ActionKey
             
-            self.life = 1
-            self.speed = 2 * self.generalSpeed
+            self.life = 1 + Int(extraLife)
+            self.speed = 2 * self.generalSpeed * extraSpeed
             
             points = [0, 0, 0, 5, 0, 0]
 
@@ -156,8 +157,8 @@ struct Duck {
             self.deathAnimation = death3Animation
             self.deathActionKey = death3ActionKey
 
-            self.life = 2
-            self.speed = 2 * self.generalSpeed
+            self.life = 2 + Int(extraLife)
+            self.speed = 2 * self.generalSpeed * extraSpeed
             
             points = [0, 0, 1, 5, 0, 0]
 
