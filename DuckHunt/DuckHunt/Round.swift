@@ -40,17 +40,33 @@ struct Round {
     var extraLife = 0.0
     var extraSpeed = 1.0
     
-    var playerHealth = 5
-    var playerMistakes = 10
+    var playerMistakes = 0
+    var playerMaxMistakes = 10
+    var mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_0")
+    var addMistake = false
     
-    let gameLimitsX: CGPoint
-    let gameLimitsY: CGPoint
+    var playerHealth = 0
+    var playerMaxHealth = 5
+    var healthSprite = SKSpriteNode()
+    
+    var gameOver = false
+    
+    var gameLimitsX: CGPoint
+    var gameLimitsY: CGPoint
     
     let timeBetweenRounds = 3
     
     init(gLimX: CGPoint, gLimY: CGPoint) {
         self.gameLimitsX = gLimX
         self.gameLimitsY = gLimY
+        
+        self.gameLimitsX.x += 25
+        self.gameLimitsX.y -= 25
+        
+        self.gameLimitsY.x += 25
+        self.gameLimitsY.y -= 25
+        
+        playerHealth = playerMaxHealth
         
         spawnDucks()
     }
@@ -96,6 +112,19 @@ struct Round {
         calculateBullets(num: numBullets)
     }
     
+    mutating func addMistakeFunc(mistakes: Int)
+    {
+        for _ in 1...mistakes {
+            do {
+                if(playerMistakes + 1 != playerMaxMistakes + 1 )
+                {
+                    playerMistakes += 1
+                }
+                else { gameOver = true }
+            }
+        }
+    }
+    
     mutating func nextRound() -> Int
     {
         if(ducks.count != 0)
@@ -106,6 +135,20 @@ struct Round {
                 do {
                     if(ducks[index].endRound && ducks [index].node.position == ducks[index].initialPos)
                     {
+                        ducksAlive = 0
+                        var index2 = 0
+                        for _ in 1...2 {
+                            do {
+                                if(ducks[index2].node.parent != nil) { ducksAlive += 1 }
+                                index2 += 1
+                            }
+                        }
+                        if(ducksAlive != 0) {
+                            addMistake = true
+                        }
+                        
+                        
+                        removeAllAttacks()
                         removeDucks()
                         ducks.removeAll()
                         billboardFlags[0] = true
@@ -122,6 +165,7 @@ struct Round {
             
             if(ducksAlive == 0)
             {
+                removeAllAttacks()
                 ducks.removeAll()
                 billboardFlags[0] = true
                 timer = 0
@@ -163,6 +207,17 @@ struct Round {
         for _ in 1...2 {
             do {
                 ducks[index].node.removeFromParent()
+                index += 1
+            }
+        }
+    }
+    
+    mutating func removeAllAttacks()
+    {
+        var index = 0
+        for _ in 1...2 {
+            do {
+                ducks[index].removeAllAttacks()
                 index += 1
             }
         }

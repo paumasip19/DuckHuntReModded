@@ -13,6 +13,7 @@
 		EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0BE92C263B285C00164974 /* DuckEnemy.swift */; };
 		EF6B1002264AF34500CC7F3A /* Points.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6B1001264AF34500CC7F3A /* Points.swift */; };
 		EF6B1006265434FB00CC7F3A /* Round.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6B1005265434FB00CC7F3A /* Round.swift */; };
+		EFA6FDB2266D4209009F3F67 /* Attack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA6FDB1266D4209009F3F67 /* Attack.swift */; };
 		EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F062631F6CB00D45033 /* AppDelegate.swift */; };
 		EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F0A2631F6CB00D45033 /* Actions.sks */; };
 		EFE20F0D2631F6CB00D45033 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F0C2631F6CB00D45033 /* GameScene.swift */; };
@@ -28,6 +29,7 @@
 		EF0BE92C263B285C00164974 /* DuckEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuckEnemy.swift; sourceTree = "<group>"; };
 		EF6B1001264AF34500CC7F3A /* Points.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Points.swift; sourceTree = "<group>"; };
 		EF6B1005265434FB00CC7F3A /* Round.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Round.swift; sourceTree = "<group>"; };
+		EFA6FDB1266D4209009F3F67 /* Attack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attack.swift; sourceTree = "<group>"; };
 		EFE20F032631F6CB00D45033 /* DuckHunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckHunt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE20F062631F6CB00D45033 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFE20F0A2631F6CB00D45033 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			children = (
 				EFE20F062631F6CB00D45033 /* AppDelegate.swift */,
 				EFE20F0A2631F6CB00D45033 /* Actions.sks */,
+				EFA6FDB1266D4209009F3F67 /* Attack.swift */,
 				EFE20F0C2631F6CB00D45033 /* GameScene.swift */,
 				EF0BE929263B206200164974 /* GameScene+Creations.swift */,
 				CBDA2F842642C3B300DF2C0A /* GameScene+Logic.swift */,
@@ -164,6 +167,7 @@
 				EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */,
 				EF6B1006265434FB00CC7F3A /* Round.swift in Sources */,
 				EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */,
+				EFA6FDB2266D4209009F3F67 /* Attack.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

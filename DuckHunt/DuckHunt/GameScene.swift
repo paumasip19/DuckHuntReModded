@@ -10,7 +10,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    let gameLimitsX = CGPoint(x: 40, y: 710)
+    let gameLimitsX = CGPoint(x: 0, y: 750)
     let gameLimitsY = CGPoint(x: 480, y: 1000)
         
     var aimSprite: SKSpriteNode!
@@ -40,6 +40,9 @@ class GameScene: SKScene {
         
         //Aim
         initAim()
+        
+        initMistakes()
+        initHealth()
     }
     
     func addDucks(){
@@ -57,8 +60,7 @@ class GameScene: SKScene {
             {
                 aimSprite.position = touch.location(in: self)
                 
-                roundManager.shootBullet()
-                initBullets(num: roundManager.numBullets)
+                var isBulletShot = [true, true]
                 
                 for (index, _) in roundManager.ducks.enumerated()
                 {
@@ -69,8 +71,35 @@ class GameScene: SKScene {
                             points.updateScore(pointsAdded: roundManager.ducks[index].getPoints())
                         }
                     }
-                    //roundManager.ducks[index].node.position = aimSprite.position
-                    //print(roundManager.ducks[index].node.position)
+                    
+                    
+                    var eliminate = [CGPoint]()
+                    
+                    for (index2, _) in roundManager.ducks[index].attacks.enumerated()
+                    {
+                        if(roundManager.ducks[index].attacks[index2].hitAttack(position: touch.location(in: self)))
+                        {
+                            isBulletShot[index] = false
+                            if(roundManager.ducks[index].attacks[index2].mustDeleteAttack())
+                            {
+                                eliminate.append(CGPoint(x: index, y: index2))
+                            }
+                        }
+                    }
+                    
+                    if(eliminate.count != 0)
+                    {
+                        for (index2, _) in eliminate.enumerated()
+                        {
+                            roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
+                        }
+                    }
+                }
+                
+                if(isBulletShot[0] && isBulletShot[1])
+                {
+                    roundManager.shootBullet()
+                    initBullets(num: roundManager.numBullets)
                 }
             }
             else
@@ -102,6 +131,39 @@ class GameScene: SKScene {
             {
                 roundManager.ducks[index].shouldKillDuck()
                 roundManager.ducks[index].movementLogic()
+                
+                if(roundManager.ducks[index].addAttack)
+                {
+                    let num = roundManager.ducks[index].attacks.count-1
+                    addChild(roundManager.ducks[index].attacks[num].node)
+                    roundManager.ducks[index].addAttack = false
+                }
+                
+                var eliminate = [CGPoint]()
+                for (index2, _) in roundManager.ducks[index].attacks.enumerated()
+                {
+                    if(roundManager.ducks[index].attacks[index2].checkPlayerHit()) //Hits Player
+                    {
+                        roundManager.playerHealth -= 1
+                        eliminate.append(CGPoint(x: index, y: index2))
+                        
+                        if(roundManager.playerHealth == 0) { roundManager.gameOver = true }
+                        initHealth()
+                    }
+                    else
+                    {
+                        roundManager.ducks[index].attacks[index2].rockMovement()
+                    }
+                }
+                
+                if(eliminate.count != 0)
+                {
+                    for (index2, _) in eliminate.enumerated()
+                    {
+                        roundManager.ducks[Int(eliminate[index2].x)].attacks[Int(eliminate[index2].y)].node.removeFromParent()
+                        roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
+                    }
+                }
             }
         }
         
@@ -117,6 +179,12 @@ class GameScene: SKScene {
         }
         else if(roundResult == 1) //Muestra ronda
         {
+            if(roundManager.addMistake)
+            {
+                roundManager.addMistake = false
+                roundManager.addMistakeFunc(mistakes: roundManager.ducksAlive)
+                initMistakes()
+            }
             if(!roundManager.billboardOn)
             {
                 initRoundNumber()

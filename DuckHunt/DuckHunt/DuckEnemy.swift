@@ -8,6 +8,7 @@
 import GameplayKit
 import SpriteKit
 
+//Revisar sistema de cambio de movimiento en caso de pillarse con pared
 enum MovementType:Int { case RIGHT = 0; case UP = 1; case DIAGONAL_RIGHT_UP = 2; case DIAGONAL_LEFT_UP = 3;
     case LEFT = 4; case DOWN = 5; case DIAGONAL_RIGHT_DOWN = 6; case DIAGONAL_LEFT_DOWN = 7; case NONE = 8 }
 
@@ -65,6 +66,11 @@ struct Duck {
     var timeOut: Int
     var endRound: Bool
     
+    var attackProbability: Int
+    var addAttack = false
+    
+    var attacks = [Attack]()
+    
     var node: SKSpriteNode!
     
     init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint, extraSpeed: CGFloat,
@@ -118,6 +124,8 @@ struct Duck {
             self.life = 2 + Int(extraLife)
             self.speed = 1 * self.generalSpeed * extraSpeed
             
+            self.attackProbability = 1
+            
             points = [0, 0, 1, 0, 0, 0]
 
         case 2:
@@ -138,6 +146,8 @@ struct Duck {
             
             self.life = 1 + Int(extraLife)
             self.speed = 2 * self.generalSpeed * extraSpeed
+            
+            self.attackProbability = 2
             
             points = [0, 0, 0, 5, 0, 0]
 
@@ -161,6 +171,8 @@ struct Duck {
             self.speed = 2 * self.generalSpeed * extraSpeed
             
             points = [0, 0, 1, 5, 0, 0]
+            
+            self.attackProbability = 2
 
         default:
             fatalError()
@@ -440,8 +452,6 @@ struct Duck {
     {
         timer += 10
         
-        //print(timer / 700)
-        
         if(timer % 400 == 0 && !self.endRound)
         {
             if(!self.canMove) { self.canMove = true; }
@@ -457,6 +467,16 @@ struct Duck {
             self.lastPos = self.node.position
         }
         
+        if(timer % 700 * 3 == 0)
+        {
+            let at = Int.random(in: 0...25)
+            if(at < self.attackProbability)
+            {
+                attacks.append(Attack(pos: node.position))
+                addAttack = true
+            }
+        }
+        
         if(timer % (700 * self.timeOut) == 0 && !self.isDead() && !self.endRound)
         {
             self.setInOutAnimation(duckType: self.duckType, initPositionIndex: self.getInitPosIndex(), enter: false)
@@ -468,6 +488,8 @@ struct Duck {
             self.node.removeFromParent() //No borra el node
         }*/
     }
+    
+    
     
     func getInitPosIndex() -> Int
     {
@@ -483,6 +505,19 @@ struct Duck {
         }
         
         return index
+    }
+    
+    mutating func removeAllAttacks()
+    {
+        if(attacks.count != 0)
+        {
+            for (index, _) in attacks.enumerated()
+            {
+                attacks[index].node.removeFromParent()
+            }
+            
+            attacks.removeAll()
+        }
     }
         
     mutating func changeMovement()
@@ -515,12 +550,15 @@ struct Duck {
                     index += 1
                 }
             }
-            
+            print("Previous Type")
+            print(self.movementType)
             if(self.movementType.rawValue < 4)
             {
                 self.movementType = MovementType(rawValue: self.movementType.rawValue + 4)!
             }
             else { self.movementType = MovementType(rawValue: self.movementType.rawValue - 4)! }
+            print("Actual Type")
+            print(self.movementType)
             
             self.getDirection()
             

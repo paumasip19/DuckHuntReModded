@@ -46,7 +46,7 @@ extension GameScene {
         self.aimSprite.size = CGSize(width: 80, height: 80)
         self.aimSprite.zPosition = 15
         
-        self.aimSprite.position = CGPoint(x: 300, y: 300)
+        self.aimSprite.position = CGPoint(x: 2000, y: 2000)
         self.addChild(self.aimSprite)
     }
     
@@ -149,5 +149,29 @@ extension GameScene {
         addChild(roundManager.bulletsSprite[1])
     }
     
+    func initMistakes()
+    {
+        roundManager.mistakeSprite.removeFromParent()
+        
+        roundManager.mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_" + String(roundManager.playerMistakes))
+        roundManager.mistakeSprite.name = "Mistakes"
+        roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)
+        roundManager.mistakeSprite.anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.mistakeSprite.position = CGPoint(x: 280, y: 365)
+        roundManager.mistakeSprite.zPosition = 105
+        addChild(roundManager.mistakeSprite)
+    }
     
+    func initHealth()
+    {
+        roundManager.healthSprite.removeFromParent()
+        
+        roundManager.healthSprite = SKSpriteNode(imageNamed: "Hearts_" + String(roundManager.playerHealth))
+        roundManager.healthSprite.name = "Health"
+        roundManager.healthSprite.size = CGSize(width: roundManager.healthSprite.size.width * 3, height: roundManager.healthSprite.size.height * 2.9)
+        roundManager.healthSprite.anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.healthSprite.position = CGPoint(x: 280, y: 340)
+        roundManager.healthSprite.zPosition = 105
+        addChild(roundManager.healthSprite)
+    }
 }
