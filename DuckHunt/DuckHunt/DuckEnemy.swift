@@ -14,7 +14,7 @@ enum MovementType:Int { case RIGHT = 0; case UP = 1; case DIAGONAL_RIGHT_UP = 2;
 
 struct Duck {
     let duckIndex: Int
-    let duckType: Int
+    var duckType: Int
     
     let flyRightAnimation: [SKTexture]?
     var flyRightAction: SKAction?
@@ -75,10 +75,21 @@ struct Duck {
     
     init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint, extraSpeed: CGFloat,
          extraLife: CGFloat){
-        //Basics
-        self.node = SKSpriteNode(imageNamed: "Duck" + String(duckType) + "_" + String(duckNumber))
         
         self.duckType = duckType
+        
+        let golden = Int.random(in: 0...30)
+        
+        if(golden == 1)
+        {
+            self.duckType = 4
+        }
+        
+        
+        
+        //Basics
+        self.node = SKSpriteNode(imageNamed: "Duck" + String(self.duckType) + "_" + String(duckNumber))
+        
         self.duckIndex = duckNumber
         self.timeOut = 10
         self.endRound = false
@@ -104,7 +115,7 @@ struct Duck {
         self.generalSpeed = 10
         
         //Animation Set
-        switch duckType {
+        switch self.duckType {
         case 1:
             self.flyRightAnimation = flyRight1Animation
             self.flyRightActionKey = flyRight1ActionKey
@@ -173,6 +184,29 @@ struct Duck {
             points = [0, 0, 1, 5, 0, 0]
             
             self.attackProbability = 2
+            
+        case 4:
+            self.flyRightAnimation = flyRight4Animation
+            self.flyRightActionKey = flyRight4ActionKey
+            
+            self.flyUpAnimation = flyUp4Animation
+            self.flyUpActionKey = flyUp4ActionKey
+            
+            self.flyDiagonalAnimation = flyDiagonal4Animation
+            self.flyDiagonalActionKey = flyDiagonal4ActionKey
+
+            self.hurtAnimation = hurt4Animation
+            self.hurtActionKey = hurt4ActionKey
+            
+            self.deathAnimation = death4Animation
+            self.deathActionKey = death4ActionKey
+
+            self.life = 3 + Int(extraLife)
+            self.speed = 3 * self.generalSpeed * extraSpeed
+            
+            points = [0, 0, 3, 0, 0, 0]
+            
+            self.attackProbability = 3
 
         default:
             fatalError()
@@ -182,8 +216,6 @@ struct Duck {
         
         let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 1)
         
-        
-                
         let animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.10)
         self.flyRightAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
         
@@ -270,6 +302,23 @@ struct Duck {
             else if(initPositionIndex == 1)
             {
                 self.firstAnimation = flyUp3Animation
+                self.firstActionKey! += flyUpActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyUpAnimation!, timePerFrame: 0.05)
+            }
+        }
+        else if(duckType == 4)
+        {
+            if(initPositionIndex == 0 || initPositionIndex == 2)
+            {
+                self.firstAnimation = flyRight4Animation
+                self.firstActionKey! += flyRightActionKey!
+                
+                animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
+            }
+            else if(initPositionIndex == 1)
+            {
+                self.firstAnimation = flyUp4Animation
                 self.firstActionKey! += flyUpActionKey!
                 
                 animation0 = SKAction.animate(with: self.flyUpAnimation!, timePerFrame: 0.05)
@@ -472,7 +521,7 @@ struct Duck {
             let at = Int.random(in: 0...25)
             if(at < self.attackProbability)
             {
-                attacks.append(Attack(pos: node.position))
+                attacks.append(Attack(pos: node.position, gX: gameLimitsX, gY: gameLimitsY))
                 addAttack = true
             }
         }
@@ -610,9 +659,15 @@ private let flyRight3Animation = [SKTexture(imageNamed: "Duck3_0"),
                                   SKTexture(imageNamed: "Duck3_2"),
                                   SKTexture(imageNamed: "Duck3_1")]
 
+private let flyRight4Animation = [SKTexture(imageNamed: "Duck4_0"),
+                                  SKTexture(imageNamed: "Duck4_1"),
+                                  SKTexture(imageNamed: "Duck4_2"),
+                                  SKTexture(imageNamed: "Duck4_1")]
+
 private let flyRight1ActionKey = "FlyRight1"
 private let flyRight2ActionKey = "FlyRight2"
 private let flyRight3ActionKey = "FlyRight3"
+private let flyRight4ActionKey = "FlyRight4"
 
 //Fly Diagonal Animations
 private let flyDiagonal1Animation = [SKTexture(imageNamed: "Duck1_3"),
@@ -630,9 +685,15 @@ private let flyDiagonal3Animation  = [SKTexture(imageNamed: "Duck3_3"),
                                       SKTexture(imageNamed: "Duck3_5"),
                                       SKTexture(imageNamed: "Duck3_4")]
 
+private let flyDiagonal4Animation  = [SKTexture(imageNamed: "Duck4_3"),
+                                      SKTexture(imageNamed: "Duck4_4"),
+                                      SKTexture(imageNamed: "Duck4_5"),
+                                      SKTexture(imageNamed: "Duck4_4")]
+
 private let flyDiagonal1ActionKey = "FlyDiagonal1"
 private let flyDiagonal2ActionKey = "FlyDiagonal2"
 private let flyDiagonal3ActionKey = "FlyDiagonal3"
+private let flyDiagonal4ActionKey = "FlyDiagonal4"
 
 //Fly Up Animations
 private let flyUp1Animation = [SKTexture(imageNamed: "Duck1_6"),
@@ -650,24 +711,38 @@ private let flyUp3Animation  = [SKTexture(imageNamed: "Duck3_6"),
                                 SKTexture(imageNamed: "Duck3_8"),
                                 SKTexture(imageNamed: "Duck3_7")]
 
+private let flyUp4Animation  = [SKTexture(imageNamed: "Duck4_6"),
+                                SKTexture(imageNamed: "Duck4_7"),
+                                SKTexture(imageNamed: "Duck4_8"),
+                                SKTexture(imageNamed: "Duck4_7")]
+
 private let flyUp1ActionKey = "FlyUp1"
 private let flyUp2ActionKey = "FlyUp2"
 private let flyUp3ActionKey = "FlyUp3"
+private let flyUp4ActionKey = "FlyUp4"
 
 //Hurt Animations
 private let hurt1Animation = [SKTexture(imageNamed: "Duck1_9")]
 private let hurt2Animation  = [SKTexture(imageNamed: "Duck2_9")]
 private let hurt3Animation  = [SKTexture(imageNamed: "Duck3_9")]
+private let hurt4Animation  = [SKTexture(imageNamed: "Duck4_9")]
 
 private let hurt1ActionKey = "Hurt1"
 private let hurt2ActionKey = "Hurt2"
 private let hurt3ActionKey = "Hurt3"
+private let hurt4ActionKey = "Hurt4"
 
 //Death Animations
-private let death1Animation = [SKTexture(imageNamed: "Duck1_10")]
-private let death2Animation  = [SKTexture(imageNamed: "Duck2_10")]
-private let death3Animation  = [SKTexture(imageNamed: "Duck3_10")]
+private let death1Animation = [SKTexture(imageNamed: "Duck1_10"),
+                               SKTexture(imageNamed: "Duck1_11")]
+private let death2Animation  = [SKTexture(imageNamed: "Duck2_10"),
+                                SKTexture(imageNamed: "Duck2_11")]
+private let death3Animation  = [SKTexture(imageNamed: "Duck3_10"),
+                                SKTexture(imageNamed: "Duck3_11")]
+private let death4Animation  = [SKTexture(imageNamed: "Duck4_10"),
+                                SKTexture(imageNamed: "Duck4_11")]
 
 private let death1ActionKey = "Death1"
 private let death2ActionKey = "Death2"
 private let death3ActionKey = "Death3"
+private let death4ActionKey = "Death4"

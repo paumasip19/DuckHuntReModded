@@ -17,18 +17,44 @@ struct Attack
     var actualHits = 0
     var maxSize: CGFloat
     
-    var timer = 0
+    let gameLimitsX: CGPoint
+    let gameLimitsY: CGPoint
     
-    init(pos: CGPoint){
+    init(pos: CGPoint, gX: CGPoint, gY: CGPoint){
+                
+        gameLimitsX = gX
+        gameLimitsY = gY
                 
         node = SKSpriteNode(imageNamed: "Rock_" + String(actualHits))
         node.name = "Attack"
         node.size = CGSize(width: node.size.width * 0.5, height: node.size.height * 0.5)
         node.anchorPoint = CGPoint(x: 0, y: 0)
-        node.position = CGPoint(x: pos.x, y: pos.y)
         node.zPosition = 14
         
         self.maxSize = node.size.width * 3
+        
+        var finalPos = pos
+        
+        if(finalPos.x + maxSize >= gX.y)
+        {
+            finalPos.x = gX.y - maxSize
+        }
+        else if(finalPos.x - node.size.width <= gX.x)
+        {
+            finalPos.x = gX.x
+        }
+        
+        if(finalPos.y + maxSize >= gY.y)
+        {
+            finalPos.y = gY.y - maxSize
+        }
+        else if(finalPos.y - node.size.height <= gY.x)
+        {
+            finalPos.y = gY.x
+        }
+
+        node.position = CGPoint(x: finalPos.x, y: finalPos.y)
+        
     }
     
     func rockMovement()
