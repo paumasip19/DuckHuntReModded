@@ -396,7 +396,7 @@ struct Duck {
     {
         if(isDead())
         {
-            if(node.position.y <= 500)
+            if(node.position.y <= 510)
             {
                 node.removeFromParent()
             }
@@ -516,7 +516,7 @@ struct Duck {
             self.lastPos = self.node.position
         }
         
-        if(timer % 700 * 3 == 0)
+        if(timer % 700 * 3 == 0 && !isDead())
         {
             let at = Int.random(in: 0...25)
             if(at < self.attackProbability)
