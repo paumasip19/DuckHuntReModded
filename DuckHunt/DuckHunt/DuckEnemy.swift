@@ -601,11 +601,15 @@ struct Duck {
             }
             print("Previous Type")
             print(self.movementType)
-            if(self.movementType.rawValue < 4)
+            /*if(self.movementType.rawValue < 4)
             {
                 self.movementType = MovementType(rawValue: self.movementType.rawValue + 4)!
             }
-            else { self.movementType = MovementType(rawValue: self.movementType.rawValue - 4)! }
+            else { self.movementType = MovementType(rawValue: self.movementType.rawValue - 4)! }*/
+            
+            self.direction = CGPoint(x: -self.direction.x, y: -self.direction.y)
+            getMovementType()
+            
             print("Actual Type")
             print(self.movementType)
             
