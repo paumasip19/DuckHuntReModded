@@ -126,6 +126,19 @@ extension GameScene {
         }
     }
     
+    func initGameOver()
+    {
+        roundManager.startGameOver = false
+        roundManager.gameOverSprite.name = "GameOver"
+        let bSize = roundManager.gameOverSprite.size
+        roundManager.gameOverSprite.size = CGSize(width: bSize.width,
+                                 height: bSize.height)
+        roundManager.gameOverSprite.anchorPoint = CGPoint(x: 0, y: 0)
+        roundManager.gameOverSprite.position = CGPoint(x: 375 - bSize.width/2, y: 700)
+        roundManager.gameOverSprite.zPosition = 100
+        addChild(roundManager.gameOverSprite)
+    }
+    
     func initBullets(num: Int)
     {
         roundManager.bulletsSprite[0].removeFromParent()

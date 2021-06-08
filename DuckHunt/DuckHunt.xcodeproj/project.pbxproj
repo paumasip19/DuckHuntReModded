@@ -14,6 +14,8 @@
 		EF6B1002264AF34500CC7F3A /* Points.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6B1001264AF34500CC7F3A /* Points.swift */; };
 		EF6B1006265434FB00CC7F3A /* Round.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6B1005265434FB00CC7F3A /* Round.swift */; };
 		EFA6FDB2266D4209009F3F67 /* Attack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA6FDB1266D4209009F3F67 /* Attack.swift */; };
+		EFA6FDB4266EC107009F3F67 /* MenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFA6FDB3266EC107009F3F67 /* MenuScene.sks */; };
+		EFA6FDB6266EC12E009F3F67 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA6FDB5266EC12E009F3F67 /* MenuScene.swift */; };
 		EFE20F072631F6CB00D45033 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F062631F6CB00D45033 /* AppDelegate.swift */; };
 		EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EFE20F0A2631F6CB00D45033 /* Actions.sks */; };
 		EFE20F0D2631F6CB00D45033 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE20F0C2631F6CB00D45033 /* GameScene.swift */; };
@@ -30,6 +32,8 @@
 		EF6B1001264AF34500CC7F3A /* Points.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Points.swift; sourceTree = "<group>"; };
 		EF6B1005265434FB00CC7F3A /* Round.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Round.swift; sourceTree = "<group>"; };
 		EFA6FDB1266D4209009F3F67 /* Attack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attack.swift; sourceTree = "<group>"; };
+		EFA6FDB3266EC107009F3F67 /* MenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MenuScene.sks; sourceTree = "<group>"; };
+		EFA6FDB5266EC12E009F3F67 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
 		EFE20F032631F6CB00D45033 /* DuckHunt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DuckHunt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE20F062631F6CB00D45033 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFE20F0A2631F6CB00D45033 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -73,6 +77,7 @@
 				EFE20F062631F6CB00D45033 /* AppDelegate.swift */,
 				EFE20F0A2631F6CB00D45033 /* Actions.sks */,
 				EFA6FDB1266D4209009F3F67 /* Attack.swift */,
+				EFA6FDB5266EC12E009F3F67 /* MenuScene.swift */,
 				EFE20F0C2631F6CB00D45033 /* GameScene.swift */,
 				EF0BE929263B206200164974 /* GameScene+Creations.swift */,
 				CBDA2F842642C3B300DF2C0A /* GameScene+Logic.swift */,
@@ -81,8 +86,9 @@
 				EF6B1005265434FB00CC7F3A /* Round.swift */,
 				EF6B1001264AF34500CC7F3A /* Points.swift */,
 				EFE20F102631F6CB00D45033 /* Main.storyboard */,
-				EFE20F132631F6CC00D45033 /* Assets.xcassets */,
+				EFA6FDB3266EC107009F3F67 /* MenuScene.sks */,
 				CBDA2F812642B7AC00DF2C0A /* GameScene.sks */,
+				EFE20F132631F6CC00D45033 /* Assets.xcassets */,
 				EFE20F152631F6CC00D45033 /* Info.plist */,
 			);
 			path = DuckHunt;
@@ -148,6 +154,7 @@
 				CBDA2F822642B7AC00DF2C0A /* GameScene.sks in Resources */,
 				EFE20F122631F6CB00D45033 /* Main.storyboard in Resources */,
 				EFE20F142631F6CC00D45033 /* Assets.xcassets in Resources */,
+				EFA6FDB4266EC107009F3F67 /* MenuScene.sks in Resources */,
 				EFE20F0B2631F6CB00D45033 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -166,6 +173,7 @@
 				EF6B1002264AF34500CC7F3A /* Points.swift in Sources */,
 				EF0BE92A263B206200164974 /* GameScene+Creations.swift in Sources */,
 				EF6B1006265434FB00CC7F3A /* Round.swift in Sources */,
+				EFA6FDB6266EC12E009F3F67 /* MenuScene.swift in Sources */,
 				EF0BE92D263B285C00164974 /* DuckEnemy.swift in Sources */,
 				EFA6FDB2266D4209009F3F67 /* Attack.swift in Sources */,
 			);

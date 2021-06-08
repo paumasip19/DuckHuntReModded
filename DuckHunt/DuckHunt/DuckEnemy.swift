@@ -40,6 +40,10 @@ struct Duck {
     var firstAction: SKAction?
     var firstActionKey: String?
     
+    var coinAnimation: [SKTexture]?
+    var coinAction: SKAction?
+    var coinActionKey: String?
+    
     let gameLimitsX: CGPoint
     let gameLimitsY: CGPoint
     
@@ -80,7 +84,7 @@ struct Duck {
         
         let golden = Int.random(in: 0...30)
         
-        if(golden == 1)
+        if(golden == 1 && duckType != 5)
         {
             self.duckType = 4
         }
@@ -207,10 +211,36 @@ struct Duck {
             points = [0, 0, 3, 0, 0, 0]
             
             self.attackProbability = 3
+            
+        case 5:
+            self.flyRightAnimation = flyRight4Animation
+            self.flyRightActionKey = flyRight4ActionKey
+            
+            self.flyUpAnimation = flyUp4Animation
+            self.flyUpActionKey = flyUp4ActionKey
+            
+            self.flyDiagonalAnimation = flyDiagonal4Animation
+            self.flyDiagonalActionKey = flyDiagonal4ActionKey
+
+            self.hurtAnimation = hurt4Animation
+            self.hurtActionKey = hurt4ActionKey
+            
+            self.deathAnimation = death4Animation
+            self.deathActionKey = death4ActionKey
+
+            self.life = 1
+            self.speed = 2 * self.generalSpeed * extraSpeed
+            
+            points = [0, 0, 2, 0, 0, 0]
+            
+            self.attackProbability = 0
 
         default:
             fatalError()
         }
+        
+        self.coinAnimation = coinAnim
+        self.coinActionKey = coinActionK
         
         self.finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
         
@@ -238,21 +268,19 @@ struct Duck {
         
         node.removeAllActions()
         
-        self.setInOutAnimation(duckType: duckType, initPositionIndex: initPositionIndex, enter: true)
+        self.setInOutAnimation(duckType: self.duckType, initPositionIndex: initPositionIndex, enter: true)
     }
     
     mutating func setInOutAnimation(duckType: Int, initPositionIndex: Int, enter: Bool)
     {
         var movement = SKAction.move(to: self.eneterPoint, duration: 1)
         
-        if(enter) { self.firstActionKey = "First" }
+        if(enter && duckType != 5) { self.firstActionKey = "First" }
         else
         {
             self.firstActionKey = "Last"
             movement = SKAction.move(to: self.initialPos, duration: 1)
         }
-        
-
         
         var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
@@ -325,9 +353,17 @@ struct Duck {
             }
         }
         
-        self.firstAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+        if(duckType != 5)
+        {
+            self.firstAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+            self.node.run(self.firstAction!, withKey: self.firstActionKey!)
+        }
+        else
+        {
+            //self.coinAction
+            self.node.run(self.coinAction!, withKey: self.coinActionKey!)
+        }
         
-        self.node.run(self.firstAction!, withKey: self.firstActionKey!)
         
         if(enter)
         {
@@ -750,3 +786,13 @@ private let death1ActionKey = "Death1"
 private let death2ActionKey = "Death2"
 private let death3ActionKey = "Death3"
 private let death4ActionKey = "Death4"
+
+//Coin Animation
+private let coinAnim = [SKTexture(imageNamed: "Coin_0"),
+                             SKTexture(imageNamed: "Coin_1"),
+                             SKTexture(imageNamed: "Coin_2"),
+                             SKTexture(imageNamed: "Coin_3"),
+                             SKTexture(imageNamed: "Coin_4"),
+                             SKTexture(imageNamed: "Coin_5")]
+
+private let coinActionK = "Coins"

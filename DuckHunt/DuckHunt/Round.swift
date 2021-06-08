@@ -41,7 +41,7 @@ struct Round {
     var extraSpeed = 1.0
     
     var playerMistakes = 0
-    var playerMaxMistakes = 10
+    var playerMaxMistakes = 2
     var mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_0")
     var addMistake = false
     
@@ -50,6 +50,8 @@ struct Round {
     var healthSprite = SKSpriteNode()
     
     var gameOver = false
+    var startGameOver = true
+    var gameOverSprite = SKSpriteNode(imageNamed: "GameOver")
     
     var gameLimitsX: CGPoint
     var gameLimitsY: CGPoint
@@ -116,7 +118,7 @@ struct Round {
     {
         for _ in 1...mistakes {
             do {
-                if(playerMistakes + 1 != playerMaxMistakes + 1 )
+                if(playerMistakes + 1 != playerMaxMistakes)
                 {
                     playerMistakes += 1
                 }

@@ -26,7 +26,8 @@ class GameScene: SKScene {
     
     var inChecker = 0
     
-    
+    var gameOverTimer = 0
+    let gameOverTimeTransition = 5
     
     override func didMove(to _: SKView) {
         //Enemies
@@ -52,59 +53,67 @@ class GameScene: SKScene {
         }
     }
     
+    func loadMenu()
+    {
+        let gameScene = GameScene(fileNamed: "MenuScene")!
+        gameScene.scaleMode = .aspectFill
+        self.scene?.view?.presentScene(gameScene, transition: SKTransition.doorsCloseHorizontal(withDuration: 1.0))
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            //print(touch.location(in: self))
-            if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)) && roundManager.numBullets > 0 && !roundManager.billboardFlags[0])
+            if(!roundManager.gameOver)
             {
-                aimSprite.position = touch.location(in: self)
-                
-                var isBulletShot = [true, true]
-                
-                for (index, _) in roundManager.ducks.enumerated()
+                if(isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: touch.location(in: self)) && roundManager.numBullets > 0 && !roundManager.billboardFlags[0])
                 {
-                    if(roundManager.ducks[index].checkHit(position: touch.location(in: self)))
+                    aimSprite.position = touch.location(in: self)
+                    
+                    var isBulletShot = [true, true]
+                    
+                    for (index, _) in roundManager.ducks.enumerated()
                     {
-                        if(roundManager.ducks[index].isDead())
+                        if(roundManager.ducks[index].checkHit(position: touch.location(in: self)))
                         {
-                            points.updateScore(pointsAdded: roundManager.ducks[index].getPoints())
-                        }
-                    }
-                    
-                    
-                    var eliminate = [CGPoint]()
-                    
-                    for (index2, _) in roundManager.ducks[index].attacks.enumerated()
-                    {
-                        if(roundManager.ducks[index].attacks[index2].hitAttack(position: touch.location(in: self)))
-                        {
-                            isBulletShot[index] = false
-                            if(roundManager.ducks[index].attacks[index2].mustDeleteAttack())
+                            if(roundManager.ducks[index].isDead())
                             {
-                                eliminate.append(CGPoint(x: index, y: index2))
+                                points.updateScore(pointsAdded: roundManager.ducks[index].getPoints())
+                            }
+                        }
+                        
+                        
+                        var eliminate = [CGPoint]()
+                        
+                        for (index2, _) in roundManager.ducks[index].attacks.enumerated()
+                        {
+                            if(roundManager.ducks[index].attacks[index2].hitAttack(position: touch.location(in: self)))
+                            {
+                                isBulletShot[index] = false
+                                if(roundManager.ducks[index].attacks[index2].mustDeleteAttack())
+                                {
+                                    eliminate.append(CGPoint(x: index, y: index2))
+                                }
+                            }
+                        }
+                        
+                        if(eliminate.count != 0)
+                        {
+                            for (index2, _) in eliminate.enumerated()
+                            {
+                                roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
                             }
                         }
                     }
                     
-                    if(eliminate.count != 0)
+                    if(isBulletShot[0] && isBulletShot[1])
                     {
-                        for (index2, _) in eliminate.enumerated()
-                        {
-                            roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
-                        }
+                        roundManager.shootBullet()
+                        initBullets(num: roundManager.numBullets)
                     }
                 }
-                
-                if(isBulletShot[0] && isBulletShot[1])
+                else
                 {
-                    roundManager.shootBullet()
-                    initBullets(num: roundManager.numBullets)
+                    aimSprite.position = CGPoint(x:-1000, y:-1000);
                 }
-            }
-            else
-            {
-                aimSprite.position = CGPoint(x:-1000, y:-1000);
             }
         }
     }
@@ -124,71 +133,90 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         
-        var roundResult = roundManager.nextRound()
-        for (index, _) in roundManager.ducks.enumerated()
+        if(!roundManager.gameOver)
         {
-            if(roundResult == 2) //Sigue jugando
+            var roundResult = roundManager.nextRound()
+            for (index, _) in roundManager.ducks.enumerated()
             {
-                roundManager.ducks[index].shouldKillDuck()
-                roundManager.ducks[index].movementLogic()
-                
-                if(roundManager.ducks[index].addAttack)
+                if(roundResult == 2) //Sigue jugando
                 {
-                    let num = roundManager.ducks[index].attacks.count-1
-                    addChild(roundManager.ducks[index].attacks[num].node)
-                    roundManager.ducks[index].addAttack = false
-                }
-                
-                var eliminate = [CGPoint]()
-                for (index2, _) in roundManager.ducks[index].attacks.enumerated()
-                {
-                    if(roundManager.ducks[index].attacks[index2].checkPlayerHit()) //Hits Player
+                    roundManager.ducks[index].shouldKillDuck()
+                    roundManager.ducks[index].movementLogic()
+                    
+                    if(roundManager.ducks[index].addAttack)
                     {
-                        roundManager.playerHealth -= 1
-                        eliminate.append(CGPoint(x: index, y: index2))
-                        
-                        if(roundManager.playerHealth == 0) { roundManager.gameOver = true }
-                        initHealth()
+                        let num = roundManager.ducks[index].attacks.count-1
+                        addChild(roundManager.ducks[index].attacks[num].node)
+                        roundManager.ducks[index].addAttack = false
                     }
-                    else
+                    
+                    var eliminate = [CGPoint]()
+                    for (index2, _) in roundManager.ducks[index].attacks.enumerated()
                     {
-                        roundManager.ducks[index].attacks[index2].rockMovement()
+                        if(roundManager.ducks[index].attacks[index2].checkPlayerHit()) //Hits Player
+                        {
+                            roundManager.playerHealth -= 1
+                            eliminate.append(CGPoint(x: index, y: index2))
+                            
+                            if(roundManager.playerHealth == 0) { roundManager.gameOver = true }
+                            initHealth()
+                        }
+                        else
+                        {
+                            roundManager.ducks[index].attacks[index2].rockMovement()
+                        }
                     }
-                }
-                
-                if(eliminate.count != 0)
-                {
-                    for (index2, _) in eliminate.enumerated()
+                    
+                    if(eliminate.count != 0)
                     {
-                        roundManager.ducks[Int(eliminate[index2].x)].attacks[Int(eliminate[index2].y)].node.removeFromParent()
-                        roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
+                        for (index2, _) in eliminate.enumerated()
+                        {
+                            roundManager.ducks[Int(eliminate[index2].x)].attacks[Int(eliminate[index2].y)].node.removeFromParent()
+                            roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
+                        }
                     }
                 }
             }
-        }
-        
-        if(roundResult == 0) //Spawnea patos
-        {
-            roundManager.billboard.removeFromParent()
-            roundManager.roundSprite[0].removeFromParent()
-            roundManager.roundSprite[1].removeFromParent()
-            roundManager.billboardOn = false
-            addDucks()
-            initBullets(num: roundManager.numBullets)
-            roundResult = -1
-        }
-        else if(roundResult == 1) //Muestra ronda
-        {
-            if(roundManager.addMistake)
+            
+            if(roundResult == 0) //Spawnea patos
             {
-                roundManager.addMistake = false
-                roundManager.addMistakeFunc(mistakes: roundManager.ducksAlive)
-                initMistakes()
+                roundManager.billboard.removeFromParent()
+                roundManager.roundSprite[0].removeFromParent()
+                roundManager.roundSprite[1].removeFromParent()
+                roundManager.billboardOn = false
+                addDucks()
+                initBullets(num: roundManager.numBullets)
+                roundResult = -1
             }
-            if(!roundManager.billboardOn)
+            else if(roundResult == 1) //Muestra ronda
             {
-                initRoundNumber()
-                roundManager.billboardOn = true
+                if(roundManager.addMistake)
+                {
+                    roundManager.addMistake = false
+                    roundManager.addMistakeFunc(mistakes: roundManager.ducksAlive)
+                    initMistakes()
+                }
+                
+                if(!roundManager.billboardOn && !roundManager.gameOver)
+                {
+                    initRoundNumber()
+                    roundManager.billboardOn = true
+                }
+            }
+        }
+        else
+        {
+            if(roundManager.startGameOver)
+            {
+                initGameOver()
+                gameOverTimer = 0
+            }
+            
+            gameOverTimer += 10
+            
+            if(gameOverTimer % (700 * gameOverTimeTransition) == 0)
+            {
+                loadMenu()
             }
         }
     }
