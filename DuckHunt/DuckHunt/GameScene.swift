@@ -184,7 +184,18 @@ class GameScene: SKScene {
                 roundManager.roundSprite[0].removeFromParent()
                 roundManager.roundSprite[1].removeFromParent()
                 roundManager.billboardOn = false
-                addDucks()
+                
+                if(roundManager.isBossRound && !roundManager.coinRound)
+                {
+                    //Start Boss Fight
+                    addDucks() //Temporary
+                }
+                else
+                {
+                    addDucks()
+                }
+                
+                
                 initBullets(num: roundManager.numBullets)
                 roundResult = -1
             }
@@ -199,6 +210,20 @@ class GameScene: SKScene {
                 
                 if(!roundManager.billboardOn && !roundManager.gameOver)
                 {
+                    if(arrayToScore(array: roundManager.roundNumbers) % roundManager.bossRound == 0 && !roundManager.isBossRound && !roundManager.coinRound)
+                    {
+                        roundManager.isBossRound = true
+                    }
+                    else if(roundManager.isBossRound)
+                    {
+                        roundManager.isBossRound = false
+                        roundManager.coinRound = true
+                    }
+                    else if(roundManager.coinRound)
+                    {
+                        roundManager.coinRound = false
+                    }
+                    
                     initRoundNumber()
                     roundManager.billboardOn = true
                 }
@@ -208,6 +233,7 @@ class GameScene: SKScene {
         {
             if(roundManager.startGameOver)
             {
+                saveNewScore(points: points)
                 initGameOver()
                 gameOverTimer = 0
             }

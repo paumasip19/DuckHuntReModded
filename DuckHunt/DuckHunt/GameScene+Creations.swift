@@ -76,53 +76,91 @@ extension GameScene {
     
     func initRoundNumber()
     {
-        roundManager.billboard.name = "Billboard"
-        let bSize = roundManager.billboard.size
-        roundManager.billboard.size = CGSize(width: bSize.width,
-                                 height: bSize.height)
-        roundManager.billboard.anchorPoint = CGPoint(x: 0, y: 0)
-        roundManager.billboard.position = CGPoint(x: 375 - bSize.width/2, y: 700)
-        roundManager.billboard.zPosition = 100
-        addChild(roundManager.billboard)
-        
-        roundManager.roundSprite[0] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[0]))
-        roundManager.roundSprite[0].name = "RoundSprite_0"
-        roundManager.roundSprite[0].size = CGSize(width: 24 * 1.2, height: 25 * 1.2)
-        roundManager.roundSprite[0].anchorPoint = CGPoint(x: 0, y: 0)
-        roundManager.roundSprite[0].position = CGPoint(x: 348 , y: 717)
-        roundManager.roundSprite[0].zPosition = 105
-        addChild(roundManager.roundSprite[0])
-        
-        roundManager.roundSprite[1] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[1]))
-        roundManager.roundSprite[1].name = "RoundSprite_0"
-        roundManager.roundSprite[1].size = CGSize(width: roundManager.roundSprite[0].size.width,
-                                                  height: roundManager.roundSprite[0].size.height)
-        roundManager.roundSprite[1].anchorPoint = CGPoint(x: 0, y: 0)
-        roundManager.roundSprite[1].position = CGPoint(x: roundManager.roundSprite[0].position.x + roundManager.roundSprite[0].size.width, y: roundManager.roundSprite[0].position.y)
-        roundManager.roundSprite[1].zPosition = 105
-        addChild(roundManager.roundSprite[1])
-        
-        if(roundManager.roundNumbers[0] != 0 &&
-           roundManager.roundNumbers[1] == 0)
+        if(!roundManager.isBossRound && !roundManager.coinRound)
         {
-            initBackground(number: roundManager.backgroundIndex);
+            roundManager.billboard = SKSpriteNode(imageNamed: "Billboard")
+            roundManager.billboard.name = "Billboard"
+            let bSize = roundManager.billboard.size
+            roundManager.billboard.size = CGSize(width: bSize.width,
+                                     height: bSize.height)
+            roundManager.billboard.anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.billboard.position = CGPoint(x: 375 - bSize.width/2, y: 700)
+            roundManager.billboard.zPosition = 100
+            addChild(roundManager.billboard)
+            
+            roundManager.roundSprite[0] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[0]))
+            roundManager.roundSprite[0].name = "RoundSprite_0"
+            roundManager.roundSprite[0].size = CGSize(width: 24 * 1.2, height: 25 * 1.2)
+            roundManager.roundSprite[0].anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.roundSprite[0].position = CGPoint(x: 348 , y: 717)
+            roundManager.roundSprite[0].zPosition = 105
+            addChild(roundManager.roundSprite[0])
+            
+            roundManager.roundSprite[1] = SKSpriteNode(imageNamed: "Points_" + String(roundManager.roundNumbers[1]))
+            roundManager.roundSprite[1].name = "RoundSprite_0"
+            roundManager.roundSprite[1].size = CGSize(width: roundManager.roundSprite[0].size.width,
+                                                      height: roundManager.roundSprite[0].size.height)
+            roundManager.roundSprite[1].anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.roundSprite[1].position = CGPoint(x: roundManager.roundSprite[0].position.x + roundManager.roundSprite[0].size.width, y: roundManager.roundSprite[0].position.y)
+            roundManager.roundSprite[1].zPosition = 105
+            addChild(roundManager.roundSprite[1])
+            
+            if(roundManager.roundNumbers[0] != 0 &&
+                roundManager.roundNumbers[1] == 0)
+            {
+                if(!roundManager.isBossRound && !roundManager.coinRound)
+                {
+                    if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
+                    else if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
+                    
+                    initBackground(number: roundManager.backgroundIndex);
+                }
+            }
+            
+            if(roundManager.roundNumbers[1] == 5)
+            {
+                roundManager.increaseLifeAndSpeed()
+            }
+            
+            if(roundManager.roundNumbers[1] == 9)
+            {
+                roundManager.roundNumbers[1] = 0
+                roundManager.roundNumbers[0] += 1
+            }
+            else
+            {
+                roundManager.roundNumbers[1] += 1
+                roundManager.isBossRound = false
+            }
         }
         
-        if(roundManager.roundNumbers[1] == 5)
+        if(roundManager.isBossRound && !roundManager.coinRound)
         {
-            roundManager.increaseLifeAndSpeed()
+            roundManager.billboard = SKSpriteNode(imageNamed: "BossBillboard")
+            roundManager.billboard.name = "BossBillboard"
+            let bSize = roundManager.billboard.size
+            roundManager.billboard.size = CGSize(width: bSize.width,
+                                     height: bSize.height)
+            roundManager.billboard.anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.billboard.position = CGPoint(x: 375 - bSize.width/2, y: 700)
+            roundManager.billboard.zPosition = 100
+            addChild(roundManager.billboard)
         }
-        
-        if(roundManager.roundNumbers[1] == 9)
+        else if(roundManager.coinRound)
         {
-            roundManager.roundNumbers[1] = 0
-            roundManager.roundNumbers[0] += 1
-            if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
-            else if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
-        }
-        else
-        {
-            roundManager.roundNumbers[1] += 1
+            roundManager.billboard = SKSpriteNode(imageNamed: "CoinBillboard")
+            roundManager.billboard.name = "CoinBillboard"
+            let bSize = roundManager.billboard.size
+            roundManager.billboard.size = CGSize(width: bSize.width,
+                                     height: bSize.height)
+            roundManager.billboard.anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.billboard.position = CGPoint(x: 375 - bSize.width/2, y: 700)
+            roundManager.billboard.zPosition = 100
+            addChild(roundManager.billboard)
+            
+            initBackground(number: 2)
+            
+            roundManager.roundNumbers[1] = 1
         }
     }
     
@@ -164,15 +202,22 @@ extension GameScene {
     
     func initMistakes()
     {
-        roundManager.mistakeSprite.removeFromParent()
-        
-        roundManager.mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_" + String(roundManager.playerMistakes))
-        roundManager.mistakeSprite.name = "Mistakes"
-        roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)
-        roundManager.mistakeSprite.anchorPoint = CGPoint(x: 0, y: 0)
-        roundManager.mistakeSprite.position = CGPoint(x: 280, y: 365)
-        roundManager.mistakeSprite.zPosition = 105
-        addChild(roundManager.mistakeSprite)
+        if(!roundManager.coinRound)
+        {
+            roundManager.mistakeSprite.removeFromParent()
+            
+            roundManager.mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_" + String(roundManager.playerMistakes))
+            roundManager.mistakeSprite.name = "Mistakes"
+            roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)
+            roundManager.mistakeSprite.anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.mistakeSprite.position = CGPoint(x: 280, y: 365)
+            roundManager.mistakeSprite.zPosition = 105
+            addChild(roundManager.mistakeSprite)
+        }
+        else
+        {
+            
+        }
     }
     
     func initHealth()

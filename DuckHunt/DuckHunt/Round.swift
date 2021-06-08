@@ -22,7 +22,7 @@ struct Round {
     var roundSprite = [SKSpriteNode(imageNamed: "Points_0"),
                        SKSpriteNode(imageNamed: "Points_0")]
     var billboardOn = false
-    var roundNumbers = [0, 1]
+    var roundNumbers = [0, 8] //Cambiar a 1
     
     var backgroundIndex = 0
     
@@ -41,7 +41,7 @@ struct Round {
     var extraSpeed = 1.0
     
     var playerMistakes = 0
-    var playerMaxMistakes = 2
+    var playerMaxMistakes = 10
     var mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_0")
     var addMistake = false
     
@@ -58,6 +58,13 @@ struct Round {
     
     let timeBetweenRounds = 3
     
+    //Coins && Boss
+    let bossRound = 10
+    var isBossRound = false
+    
+    var coinRound = false
+    var coinCount = 0
+    
     init(gLimX: CGPoint, gLimY: CGPoint) {
         self.gameLimitsX = gLimX
         self.gameLimitsY = gLimY
@@ -71,6 +78,19 @@ struct Round {
         playerHealth = playerMaxHealth
         
         spawnDucks()
+    }
+    
+    mutating func spawnBoss()
+    {
+        var num = 0
+        let random = Int.random(in: 1...3)
+        ducks.append(Duck(duckType: random, duckNumber: 0, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: CGFloat(extraSpeed), extraLife: CGFloat(extraLife)))
+        
+        num += ducks[0].life
+        
+        num *= 2
+        calculateBullets(num: num)
+        numBullets = num
     }
     
     mutating func spawnDucks()
@@ -87,6 +107,19 @@ struct Round {
                 index = index + 1
             }
         }
+        
+        num *= 2
+        calculateBullets(num: num)
+        numBullets = num
+    }
+    
+    mutating func spawnCoin()
+    {
+        var num = 0
+        
+        ducks.append(Duck(duckType: 5, duckNumber: 0, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: CGFloat(extraSpeed), extraLife: CGFloat(extraLife)))
+        
+        num += ducks[0].life
         
         num *= 2
         calculateBullets(num: num)
@@ -133,9 +166,9 @@ struct Round {
         {
             ducksAlive = 0
             var index = 0
-            for _ in 1...2 {
+            for _ in 1...ducks.count {
                 do {
-                    if(ducks[index].endRound && ducks [index].node.position == ducks[index].initialPos)
+                    if(ducks[index].endRound && ducks[index].node.position == ducks[index].initialPos)
                     {
                         ducksAlive = 0
                         var index2 = 0
@@ -191,8 +224,24 @@ struct Round {
             }
             if(billboardFlags[1])
             {
-                spawnDucks()
-                ducksAlive = 2
+                if(isBossRound && !coinRound)
+                {
+                    //Start Boss Fight
+                    spawnBoss()
+                    ducksAlive = 1
+                    print("Boss Fight")
+                }
+                else if(coinRound)
+                {
+                    spawnCoin()
+                    ducksAlive = 1
+                }
+                else
+                {
+                    spawnDucks()
+                    ducksAlive = 2
+                }
+                
                 billboardFlags[1] = false
                 return 0
             }
@@ -206,7 +255,7 @@ struct Round {
     mutating func removeDucks()
     {
         var index = 0
-        for _ in 1...2 {
+        for _ in 1...ducks.count {
             do {
                 ducks[index].node.removeFromParent()
                 index += 1
@@ -217,7 +266,7 @@ struct Round {
     mutating func removeAllAttacks()
     {
         var index = 0
-        for _ in 1...2 {
+        for _ in 1...ducks.count {
             do {
                 ducks[index].removeAllAttacks()
                 index += 1

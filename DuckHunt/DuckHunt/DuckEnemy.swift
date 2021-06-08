@@ -74,7 +74,7 @@ struct Duck {
     var addAttack = false
     
     var attacks = [Attack]()
-    
+
     var node: SKSpriteNode!
     
     init(duckType: Int, duckNumber: Int, dir: CGPoint, gLimX: CGPoint, gLimY: CGPoint, extraSpeed: CGFloat,
@@ -88,8 +88,6 @@ struct Duck {
         {
             self.duckType = 4
         }
-        
-        
         
         //Basics
         self.node = SKSpriteNode(imageNamed: "Duck" + String(self.duckType) + "_" + String(duckNumber))
@@ -213,6 +211,8 @@ struct Duck {
             self.attackProbability = 3
             
         case 5:
+            
+            self.node?.size = CGSize(width: 50, height: 50)
             self.flyRightAnimation = flyRight4Animation
             self.flyRightActionKey = flyRight4ActionKey
             
@@ -274,15 +274,19 @@ struct Duck {
     mutating func setInOutAnimation(duckType: Int, initPositionIndex: Int, enter: Bool)
     {
         var movement = SKAction.move(to: self.eneterPoint, duration: 1)
+        var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
         if(enter && duckType != 5) { self.firstActionKey = "First" }
         else
         {
-            self.firstActionKey = "Last"
-            movement = SKAction.move(to: self.initialPos, duration: 1)
+            self.deathAction = SKAction.moveBy(x: 0, y: -3000, duration: 6)
+            
+            self.firstActionKey = self.coinActionKey
+            let positions = calculateCoinPositions()
+            self.node.position = positions[0]
+            movement = SKAction.move(to: positions[1], duration: 2)
+            animation0 = SKAction.animate(with: self.coinAnimation!, timePerFrame: 0.05)
         }
-        
-        var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
         if(duckType == 1)
         {
@@ -353,16 +357,8 @@ struct Duck {
             }
         }
         
-        if(duckType != 5)
-        {
-            self.firstAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            self.node.run(self.firstAction!, withKey: self.firstActionKey!)
-        }
-        else
-        {
-            //self.coinAction
-            self.node.run(self.coinAction!, withKey: self.coinActionKey!)
-        }
+        self.firstAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+        self.node.run(self.firstAction!, withKey: self.firstActionKey!)
         
         
         if(enter)
@@ -378,6 +374,32 @@ struct Duck {
             else if(initPositionIndex == 1) { self.setScale(scale: CGPoint(x: 1, y: 1)) }
         }
         
+    }
+    
+    func calculateCoinPositions() -> [CGPoint]
+    {
+        var pos = [CGPoint]()
+        var nums = [Int]()
+        nums.append(Int.random(in: 0...1))
+        nums.append(nums[0])
+        while(nums[1] == nums[0]) { nums[1] = Int.random(in: 0...1) }
+        
+        var index = 0
+        for _ in 0...1
+        {
+            if(nums[index] == 0)
+            {
+                pos.append(CGPoint(x: initialDuckPositions[0].x, y: CGFloat.random(in: self.gameLimitsY.x...self.gameLimitsY.y)))
+            }
+            else
+            {
+                pos.append(CGPoint(x: initialDuckPositions[2].x, y: CGFloat.random(in: self.gameLimitsY.x...self.gameLimitsY.y)))
+            }
+            
+            index += 1
+        }
+    
+        return pos
     }
     
     mutating func checkHit(position: CGPoint) -> Bool
@@ -537,41 +559,43 @@ struct Duck {
     {
         timer += 10
         
-        if(timer % 400 == 0 && !self.endRound)
+        if(self.duckType != 5)
         {
-            if(!self.canMove) { self.canMove = true; }
-            changeMovement()
-        }
-        else if(!self.isIn(limitsX: gameLimitsX, limitsY: gameLimitsY) && self.canMove && !self.endRound)
-        {
-            self.node.position = self.lastPos
-            contraryMovement()
+            if(timer % 400 == 0 && !self.endRound)
+            {
+                if(!self.canMove) { self.canMove = true; }
+                changeMovement()
+            }
+            else if(!self.isIn(limitsX: gameLimitsX, limitsY: gameLimitsY) && self.canMove && !self.endRound)
+            {
+                self.node.position = self.lastPos
+                contraryMovement()
+            }
+            else
+            {
+                self.lastPos = self.node.position
+            }
+            
+            if(timer % 700 * 3 == 0 && !isDead())
+            {
+                let at = Int.random(in: 0...25)
+                if(at < self.attackProbability)
+                {
+                    attacks.append(Attack(pos: node.position, gX: gameLimitsX, gY: gameLimitsY))
+                    addAttack = true
+                }
+            }
+            
+            if(timer % (700 * self.timeOut) == 0 && !self.isDead() && !self.endRound)
+            {
+                self.setInOutAnimation(duckType: self.duckType, initPositionIndex: self.getInitPosIndex(), enter: false)
+                self.endRound = true
+            }
         }
         else
         {
-            self.lastPos = self.node.position
+            //if()
         }
-        
-        if(timer % 700 * 3 == 0 && !isDead())
-        {
-            let at = Int.random(in: 0...25)
-            if(at < self.attackProbability)
-            {
-                attacks.append(Attack(pos: node.position, gX: gameLimitsX, gY: gameLimitsY))
-                addAttack = true
-            }
-        }
-        
-        if(timer % (700 * self.timeOut) == 0 && !self.isDead() && !self.endRound)
-        {
-            self.setInOutAnimation(duckType: self.duckType, initPositionIndex: self.getInitPosIndex(), enter: false)
-            self.endRound = true
-        }
-        
-        /*if(self.node.position == self.initialPos && self.endRound)
-        {
-            self.node.removeFromParent() //No borra el node
-        }*/
     }
     
     
