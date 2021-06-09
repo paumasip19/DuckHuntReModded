@@ -90,7 +90,14 @@ struct Duck {
         }
         
         //Basics
-        self.node = SKSpriteNode(imageNamed: "Duck" + String(self.duckType) + "_" + String(duckNumber))
+        if(self.duckType != 5)
+        {
+            self.node = SKSpriteNode(imageNamed: "Duck" + String(self.duckType) + "_" + String(duckNumber))
+        }
+        else
+        {
+            self.node = SKSpriteNode(imageNamed: "Coin_0")
+        }
         
         self.duckIndex = duckNumber
         self.timeOut = 10

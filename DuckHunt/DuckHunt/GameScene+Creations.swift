@@ -217,7 +217,7 @@ extension GameScene {
         }
         else
         {
-            roundManager.mistakeSprite = SKSpriteNode(imageNamed: "GoodCoins_" + String(roundManager.coinCount))
+            roundManager.mistakeSprite = SKSpriteNode(imageNamed: "GoodCoins_" + String(roundManager.coinsShot))
             roundManager.mistakeSprite.name = "GoodCoins"
             roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)
             roundManager.mistakeSprite.anchorPoint = CGPoint(x: 0, y: 0)

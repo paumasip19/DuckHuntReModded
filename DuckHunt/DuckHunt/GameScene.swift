@@ -187,6 +187,12 @@ class GameScene: SKScene {
                 roundManager.roundSprite[1].removeFromParent()
                 roundManager.billboardOn = false
                 
+                if(roundManager.returnToMistakes)
+                {
+                    initMistakes()
+                    roundManager.returnToMistakes = false
+                }
+                
                 if(roundManager.isBossRound && !roundManager.coinRound)
                 {
                     //Start Boss Fight
@@ -210,6 +216,12 @@ class GameScene: SKScene {
                     initMistakes()
                 }
                 
+                if(roundManager.returnToMistakes)
+                {
+                    initMistakes()
+                    roundManager.returnToMistakes = false
+                }
+                
                 if(!roundManager.billboardOn && !roundManager.gameOver)
                 {
                     if(arrayToScore(array: roundManager.roundNumbers) % roundManager.bossRound == 0 && !roundManager.isBossRound && !roundManager.coinRound)
@@ -223,7 +235,7 @@ class GameScene: SKScene {
                         
                         initMistakes()
                     }
-                    else if(roundManager.coinRound)
+                    else if(roundManager.coinRound && roundManager.coinCount == roundManager.maxCoins)
                     {
                         roundManager.coinRound = false
                         initMistakes()

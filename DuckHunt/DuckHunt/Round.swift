@@ -64,6 +64,11 @@ struct Round {
     
     var coinRound = false
     var coinCount = 0
+    let maxCoins = 10
+    
+    var coinsShot = 0
+    var lastCoinsShot = 0
+    var returnToMistakes = false
     
     init(gLimX: CGPoint, gLimY: CGPoint) {
         self.gameLimitsX = gLimX
@@ -182,18 +187,36 @@ struct Round {
                             addMistake = true
                         }
                         
-                        
                         removeAllAttacks()
                         removeDucks()
                         ducks.removeAll()
-                        billboardFlags[0] = true
-                        timer = 0
+                        if(!coinRound)
+                        {
+                            billboardFlags[0] = true
+                            timer = 0
+                        }
+                        
                         break
                     }
                     else if(ducks[index].node.parent != nil)
                     {
                         ducksAlive += 1
                     }
+                    
+                    if(coinRound)
+                    {
+                        if(!ducks[index].endRound && isInBounds(limitsX: gameLimitsX, limitsY: gameLimitsY, pos: ducks[index].node.position))
+                        {
+                            ducks[index].endRound = true
+                        }
+                        if((ducks[index].node.position.x < gameLimitsX.x - 50 ||
+                           ducks[index].node.position.x > gameLimitsX.y + 50) && ducks[index].endRound)
+                        {
+                            removeDucks()
+                            ducks.removeAll()
+                        }
+                    }
+                    
                     index += 1
                 }
             }
@@ -202,13 +225,43 @@ struct Round {
             {
                 removeAllAttacks()
                 ducks.removeAll()
-                billboardFlags[0] = true
-                timer = 0
+                if(!coinRound)
+                {
+                    billboardFlags[0] = true
+                    timer = 0
+                }
+                else
+                {
+                    coinsShot += 1
+                }
             }
         }
         
         if(ducks.count == 0)
         {
+            if(coinRound && !billboardFlags[0] && !billboardFlags[0])
+            {
+                if(coinsShot != lastCoinsShot)
+                {
+                    returnToMistakes = true
+                    lastCoinsShot = coinsShot
+                }
+                
+                if(coinCount == maxCoins - 1)
+                {
+                    coinCount = 0
+                    coinRound = false
+                    returnToMistakes = true
+                    billboardFlags[0] = true
+                }
+                else
+                {
+                    coinCount += 1
+                    spawnCoin()
+                    return 0
+                }
+            }
+            
             if(billboardFlags[0])
             {
                 timer += 10
