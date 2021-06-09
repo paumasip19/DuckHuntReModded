@@ -54,6 +54,10 @@ class GameScene: SKScene {
             addChild(roundManager.ducks[index].node)
         }
     }
+
+    func addBoss(){
+        addChild(roundManager.boss.node)
+    }
     
     func loadMenu()
     {
@@ -196,7 +200,8 @@ class GameScene: SKScene {
                 if(roundManager.isBossRound && !roundManager.coinRound)
                 {
                     //Start Boss Fight
-                    addDucks() //Temporary
+                    addBoss()
+                    
                 }
                 else
                 {
@@ -244,6 +249,10 @@ class GameScene: SKScene {
                     initRoundNumber()
                     roundManager.billboardOn = true
                 }
+            }
+            else if(roundManager.isBossRound && roundResult == 2)
+            {
+                roundManager.boss.bossMovement()
             }
         }
         else

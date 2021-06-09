@@ -70,6 +70,8 @@ struct Round {
     var lastCoinsShot = 0
     var returnToMistakes = false
     
+    var boss: Boss
+    
     init(gLimX: CGPoint, gLimY: CGPoint) {
         self.gameLimitsX = gLimX
         self.gameLimitsY = gLimY
@@ -82,16 +84,17 @@ struct Round {
         
         playerHealth = playerMaxHealth
         
+        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY)
         spawnDucks()
     }
     
     mutating func spawnBoss()
     {
         var num = 0
-        let random = Int.random(in: 1...3)
-        ducks.append(Duck(duckType: random, duckNumber: 0, dir: CGPoint(x: 1, y: 0), gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: CGFloat(extraSpeed), extraLife: CGFloat(extraLife)))
+
+        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY)
         
-        num += ducks[0].life
+        num += boss.life
         
         num *= 2
         calculateBullets(num: num)
@@ -235,6 +238,10 @@ struct Round {
                     coinsShot += 1
                 }
             }
+            else if(isBossRound)
+            {
+                
+            }
         }
         
         if(ducks.count == 0)
@@ -281,8 +288,6 @@ struct Round {
                 {
                     //Start Boss Fight
                     spawnBoss()
-                    ducksAlive = 1
-                    print("Boss Fight")
                 }
                 else if(coinRound)
                 {
@@ -299,7 +304,17 @@ struct Round {
                 return 0
             }
             
-            return 1
+            if(isBossRound)
+            {
+                if(boss.life == 0)
+                {
+                    return 1
+                }
+            }
+            else
+            {
+                return 1
+            }
         }
         
         return 2
