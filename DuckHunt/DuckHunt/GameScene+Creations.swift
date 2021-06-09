@@ -106,7 +106,7 @@ extension GameScene {
             addChild(roundManager.roundSprite[1])
             
             if(roundManager.roundNumbers[0] != 0 &&
-                roundManager.roundNumbers[1] == 0)
+                roundManager.roundNumbers[1] == 1)
             {
                 if(!roundManager.isBossRound && !roundManager.coinRound)
                 {
@@ -216,7 +216,13 @@ extension GameScene {
         }
         else
         {
-            
+            roundManager.mistakeSprite = SKSpriteNode(imageNamed: "GoodCoins_" + String(roundManager.coinCount))
+            roundManager.mistakeSprite.name = "GoodCoins"
+            roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)
+            roundManager.mistakeSprite.anchorPoint = CGPoint(x: 0, y: 0)
+            roundManager.mistakeSprite.position = CGPoint(x: 280, y: 365)
+            roundManager.mistakeSprite.zPosition = 105
+            addChild(roundManager.mistakeSprite)
         }
     }
     

@@ -277,7 +277,7 @@ struct Duck {
         var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
         if(enter && duckType != 5) { self.firstActionKey = "First" }
-        else
+        else if(duckType == 5)
         {
             self.deathAction = SKAction.moveBy(x: 0, y: -3000, duration: 6)
             

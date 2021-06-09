@@ -218,10 +218,13 @@ class GameScene: SKScene {
                     {
                         roundManager.isBossRound = false
                         roundManager.coinRound = true
+                        
+                        initMistakes()
                     }
                     else if(roundManager.coinRound)
                     {
                         roundManager.coinRound = false
+                        initMistakes()
                     }
                     
                     initRoundNumber()

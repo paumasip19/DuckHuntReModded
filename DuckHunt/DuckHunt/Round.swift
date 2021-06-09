@@ -22,7 +22,7 @@ struct Round {
     var roundSprite = [SKSpriteNode(imageNamed: "Points_0"),
                        SKSpriteNode(imageNamed: "Points_0")]
     var billboardOn = false
-    var roundNumbers = [0, 8] //Cambiar a 1
+    var roundNumbers = [0, 9] //Cambiar a 1
     
     var backgroundIndex = 0
     
