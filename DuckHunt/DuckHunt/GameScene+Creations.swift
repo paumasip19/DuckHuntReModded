@@ -11,8 +11,9 @@ import SpriteKit
 extension GameScene {
     func initBackground(number: Int)
     {
-        //childNode(withName: "Background" + String(number)).removeFromParent()
-        let background = SKSpriteNode(imageNamed: "Background" + String(number))
+        background.removeFromParent()
+        background = SKSpriteNode(imageNamed: "Background" + String(number))
+        background.name = "Background"
         let bgSize = background.size
         background.size = CGSize(width: bgSize.width * 3,
                                  height: bgSize.height * 3)
@@ -113,7 +114,7 @@ extension GameScene {
                     if(roundManager.backgroundIndex == 1) { roundManager.backgroundIndex = 0 }
                     else if(roundManager.backgroundIndex == 0) { roundManager.backgroundIndex = 1 }
                     
-                    initBackground(number: roundManager.backgroundIndex);
+                    initBackground(number: roundManager.backgroundIndex)
                 }
             }
             
@@ -202,10 +203,10 @@ extension GameScene {
     
     func initMistakes()
     {
+        roundManager.mistakeSprite.removeFromParent()
+        
         if(!roundManager.coinRound)
         {
-            roundManager.mistakeSprite.removeFromParent()
-            
             roundManager.mistakeSprite = SKSpriteNode(imageNamed: "Mistakes_" + String(roundManager.playerMistakes))
             roundManager.mistakeSprite.name = "Mistakes"
             roundManager.mistakeSprite.size = CGSize(width: roundManager.mistakeSprite.size.width * 3, height: roundManager.mistakeSprite.size.height * 2.9)

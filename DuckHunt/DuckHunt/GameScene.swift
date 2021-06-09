@@ -10,6 +10,8 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    var background = SKSpriteNode()
+    
     let gameLimitsX = CGPoint(x: 0, y: 750)
     let gameLimitsY = CGPoint(x: 480, y: 1000)
         

@@ -276,16 +276,23 @@ struct Duck {
         var movement = SKAction.move(to: self.eneterPoint, duration: 1)
         var animation0 = SKAction.animate(with: self.flyRightAnimation!, timePerFrame: 0.05)
         
-        if(enter && duckType != 5) { self.firstActionKey = "First" }
-        else if(duckType == 5)
+        if(enter)
         {
-            self.deathAction = SKAction.moveBy(x: 0, y: -3000, duration: 6)
-            
-            self.firstActionKey = self.coinActionKey
-            let positions = calculateCoinPositions()
-            self.node.position = positions[0]
-            movement = SKAction.move(to: positions[1], duration: 2)
-            animation0 = SKAction.animate(with: self.coinAnimation!, timePerFrame: 0.05)
+            if(duckType != 5) { self.firstActionKey = "First" }
+            else
+            {
+                self.deathAction = SKAction.moveBy(x: 0, y: -3000, duration: 6)
+                
+                self.firstActionKey = self.coinActionKey
+                let positions = calculateCoinPositions()
+                self.node.position = positions[0]
+                movement = SKAction.move(to: positions[1], duration: 2)
+                animation0 = SKAction.animate(with: self.coinAnimation!, timePerFrame: 0.05)
+            }
+        }
+        else
+        {
+            movement = SKAction.move(to: self.initialPos, duration: 1)
         }
         
         if(duckType == 1)
