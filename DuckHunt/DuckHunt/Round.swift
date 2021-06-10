@@ -22,7 +22,7 @@ struct Round {
     var roundSprite = [SKSpriteNode(imageNamed: "Points_0"),
                        SKSpriteNode(imageNamed: "Points_0")]
     var billboardOn = false
-    var roundNumbers = [0, 9] //Cambiar a 1
+    var roundNumbers = [0, 1]
     
     var backgroundIndex = 0
     
@@ -86,7 +86,7 @@ struct Round {
         
         playerHealth = playerMaxHealth
         
-        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY)
+        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: 0)
         spawnDucks()
     }
     
@@ -94,7 +94,7 @@ struct Round {
     {
         var num: Float = 0
 
-        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY)
+        boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY, extraSpeed: CGFloat(extraSpeed))
         
         boss.life = Int(ducksLifeTotal * 0.25)
         ducksLifeTotal = 0
@@ -247,8 +247,10 @@ struct Round {
         }
         else if(isBossRound)
         {
-            if(boss.life == 0)
+            if(boss.life == 0 || numBullets == 0)
             {
+                boss.life = 0
+                removeAllAttacks()
                 boss.shouldKillBoss()
                 billboardFlags[0] = true
                 timer = 0
@@ -344,13 +346,18 @@ struct Round {
     
     mutating func removeAllAttacks()
     {
-        var index = 0
-        for _ in 1...ducks.count {
-            do {
-                ducks[index].removeAllAttacks()
-                index += 1
+        if(!isBossRound)
+        {
+            var index = 0
+            for _ in 1...ducks.count {
+                do {
+                    ducks[index].removeAllAttacks()
+                    index += 1
+                }
             }
         }
+        
+        boss.removeAllAttacks()
     }
     
     mutating func increaseLifeAndSpeed()

@@ -49,6 +49,8 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
     var attacks = [Attack]()
     
     var timer = 0
+    var attackTimer = 0
+    var hasJumped = false
     
     var node: SKSpriteNode
     var explosionNode: SKSpriteNode
@@ -57,9 +59,12 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
     var explosionAction: SKAction?
     let explosionActionKey: String?
     
-    init(gLimX: CGPoint, gLimY: CGPoint)
+    var jumpPoints = [CGPoint(), CGPoint()]
+    var isFalling = false
+    
+    init(gLimX: CGPoint, gLimY: CGPoint, extraSpeed: CGFloat)
     {
-        speed = generalSpeed //* extraSpeed
+        speed = generalSpeed * extraSpeed
         
         let rand = Int.random(in: 0...1)
         initialPos = initialPositions[rand]
@@ -90,9 +95,11 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
         self.gameLimitsX = CGPoint(x: gLimX.x + node.size.width/2, y: gLimX.y - node.size.width/2)
         self.gameLimitsY = gLimY
         
+        jumpPoints[0] = CGPoint(x: 375, y: 640)
+        
         points = [0, 0, 8, 0, 0, 0]
         
-        self.attackProbability = 3
+        self.attackProbability = 20
         
         self.runAnimation = runAnim
         self.runActionKey = runActionK
@@ -108,6 +115,10 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
         
         self.explosionAnimation = explosionAnim
         self.explosionActionKey = explosionActionK
+        
+        self.smellAction = SKAction.animate(with: self.smellAnimation!, timePerFrame: 0.1)
+        self.jumpAction = SKAction.animate(with: self.jumpAnimation!, timePerFrame: 0.1)
+        self.fallAction = SKAction.animate(with: self.fallAnimation!, timePerFrame: 0.1)
         
         self.finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
         
@@ -164,6 +175,73 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
         }
     }
     
+    func smell()
+    {
+        self.node.removeAllActions()
+        self.node.run(jumpAction!, completion: jump)
+    }
+    
+    func jump()
+    {
+        self.node.removeAllActions()
+        self.node.run(fallAction!, completion: removeAction)
+    }
+    
+    func removeAction()
+    {
+        self.node.removeAllActions()
+    }
+    
+    func fall()
+    {
+        self.node.removeAllActions()
+        self.node.run(fallAction!)
+    }
+    
+    mutating func prepareJump()
+    {
+        if((self.node.position.x > jumpPoints[0].x && direction.x == 1) ||
+            (self.node.position.x < jumpPoints[0].x && direction.x == -1))
+        {
+            direction.x = -direction.x
+            setScale(scale: CGPoint(x: direction.x, y: 1))
+        }
+        
+        jumpPoints[1] = CGPoint(x: jumpPoints[0].x + (direction.x * (abs(jumpPoints[0].x - self.node.position.x))), y: self.node.position.y)
+        
+        self.jumpAction = SKAction.group([SKAction.animate(with: self.jumpAnimation!, timePerFrame: 0.1), SKAction.move(to: jumpPoints[0], duration: 0.5)])
+        
+        self.fallAction = SKAction.group([SKAction.animate(with: self.fallAnimation!, timePerFrame: 0.1), SKAction.move(to: jumpPoints[1], duration: 0.5)])
+        
+        self.hasJumped = true
+        
+    }
+    
+    mutating func addAttackFunc()
+    {
+        let at = Int.random(in: 0...25)
+        if(at < self.attackProbability)
+        {
+            var index = 0
+            var offset: CGPoint
+            for _ in 1...2
+            {
+                
+                if(index == 0)
+                {
+                    offset = CGPoint(x: jumpPoints[0].x + 30, y: jumpPoints[0].y)
+                }
+                else
+                {
+                    offset = CGPoint(x: jumpPoints[0].x - 30, y: jumpPoints[0].y)
+                }
+                attacks.append(Attack(pos: offset, gX: gameLimitsX, gY: gameLimitsY))
+                addAttack = true
+                index += 1
+            }
+        }
+    }
+    
     mutating func actions()
     {
         timer += 10
@@ -177,7 +255,43 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
             self.lastPos = self.node.position
         }
         
-        if(timer % 10 == 0) //Resetar temporizador
+        if(!node.hasActions())
+        {
+            if(!isFalling)
+            {
+                fall()
+                isFalling = true
+            }
+            
+            if(isFalling)
+            {
+                setRunAction()
+                isFalling = false
+            }
+            
+        }
+        
+        if(hasJumped)
+        {
+            attackTimer += 10
+            
+            if(attackTimer % Int(700 * 0.6) == 0)
+            {
+                attackTimer = 0
+                hasJumped = false
+                addAttackFunc()
+            }
+        }
+        
+        if(timer % (700 * 5) == 0)
+        {
+            prepareJump()
+            
+            self.node.removeAllActions()
+            self.node.run(smellAction!, completion: smell)
+        }
+        
+        if(timer % (700 * 10) == 0) //Resetar temporizador
         {
             timer = 0
         }
@@ -191,6 +305,19 @@ struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCom
         }
         
         return false
+    }
+    
+    mutating func removeAllAttacks()
+    {
+        if(attacks.count != 0)
+        {
+            for (index, _) in attacks.enumerated()
+            {
+                attacks[index].node.removeFromParent()
+            }
+            
+            attacks.removeAll()
+        }
     }
     
     func shouldKillBoss()

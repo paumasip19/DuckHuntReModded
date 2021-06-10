@@ -57,9 +57,24 @@ struct Attack
         
     }
     
-    func rockMovement()
+    func rockMovement(round: Bool, delta: Double, orientation: Int)
     {
-        //Spin Sprite
+        if(round)
+        {
+            if(orientation == 0)
+            {
+                node.position.x = CGFloat(sin(Float(delta)) * (Float(node.size.width)/2) + 375)
+                node.position.y = CGFloat(cos(Float(delta)) * (Float(node.size.width)/2) + 640)
+            }
+            else
+            {
+                node.position.x = CGFloat(sin(Float(delta) * 3) * (Float(node.size.width)/2) + 375)
+                node.position.y = CGFloat(cos(Float(delta) * 3) * (Float(node.size.width)/2) + 640)
+            }
+            
+            
+        }
+
         //Make the rock bigger
         node.size = CGSize(width: node.size.width + increaseSpeed * 0.1,
                            height: node.size.height + increaseSpeed * 0.1)

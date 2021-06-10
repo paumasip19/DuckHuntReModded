@@ -137,9 +137,11 @@ class GameScene: SKScene {
                         
                         if(eliminate.count != 0)
                         {
-                            for (index, _) in eliminate.enumerated()
+                            var index = eliminate.count-1
+                            for (_) in eliminate.enumerated()
                             {
                                 roundManager.boss.attacks.remove(at: Int(eliminate[index].y))
+                                index -= 1
                             }
                         }
                     }
@@ -203,7 +205,7 @@ class GameScene: SKScene {
                         }
                         else
                         {
-                            roundManager.ducks[index].attacks[index2].rockMovement()
+                            roundManager.ducks[index].attacks[index2].rockMovement(round: false, delta: currentTime, orientation: 0)
                         }
                     }
                     
@@ -248,6 +250,7 @@ class GameScene: SKScene {
             }
             else if(roundResult == 1) //Muestra ronda
             {
+                aimSprite.position.x = -2000
                 if(roundManager.addMistake)
                 {
                     roundManager.addMistake = false
@@ -287,6 +290,46 @@ class GameScene: SKScene {
             else if(roundManager.isBossRound && roundResult == 2)
             {
                 roundManager.boss.bossMovement()
+                
+                if(roundManager.boss.addAttack)
+                {
+                    var index = 0
+                    for _ in 1...2
+                    {
+                        addChild(roundManager.boss.attacks[index].node)
+                        index += 1
+                    }
+                    
+                    roundManager.boss.addAttack = false
+                }
+                
+                var eliminate = [CGPoint]()
+                for (index, _) in roundManager.boss.attacks.enumerated()
+                {
+                    if(roundManager.boss.attacks[index].checkPlayerHit()) //Hits Player
+                    {
+                        if(roundManager.playerHealth != 0) { roundManager.playerHealth -= 1 }
+                        eliminate.append(CGPoint(x: 0, y: index))
+                        
+                        if(roundManager.playerHealth == 0) { roundManager.gameOver = true }
+                        initHealth()
+                    }
+                    else
+                    {
+                        roundManager.boss.attacks[index].rockMovement(round: true, delta: currentTime, orientation: index)
+                    }
+                }
+                
+                if(eliminate.count != 0)
+                {
+                    var index = eliminate.count-1
+                    for (_) in eliminate.enumerated()
+                    {
+                        roundManager.boss.attacks[Int(eliminate[index].y)].node.removeFromParent()
+                        roundManager.boss.attacks.remove(at: Int(eliminate[index].y))
+                        index -= 1
+                    }
+                }
             }
         }
         else
