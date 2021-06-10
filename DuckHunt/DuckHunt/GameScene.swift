@@ -57,6 +57,7 @@ class GameScene: SKScene {
 
     func addBoss(){
         addChild(roundManager.boss.node)
+        addChild(roundManager.boss.explosionNode)
     }
     
     func loadMenu()
@@ -106,6 +107,39 @@ class GameScene: SKScene {
                             for (index2, _) in eliminate.enumerated()
                             {
                                 roundManager.ducks[Int(eliminate[index2].x)].attacks.remove(at: Int(eliminate[index2].y))
+                            }
+                        }
+                    }
+                    
+                    if(roundManager.isBossRound)
+                    {
+                        if(roundManager.boss.checkHit(position: touch.location(in: self)))
+                        {
+                            if(roundManager.boss.isDead())
+                            {
+                                points.updateScore(pointsAdded: roundManager.boss.getPoints())
+                            }
+                        }
+                        
+                        var eliminate = [CGPoint]()
+                        
+                        for (index, _) in roundManager.boss.attacks.enumerated()
+                        {
+                            if(roundManager.boss.attacks[index].hitAttack(position: touch.location(in: self)))
+                            {
+                                isBulletShot = [false, false]
+                                if(roundManager.boss.attacks[index].mustDeleteAttack())
+                                {
+                                    eliminate.append(CGPoint(x: 0, y: index))
+                                }
+                            }
+                        }
+                        
+                        if(eliminate.count != 0)
+                        {
+                            for (index, _) in eliminate.enumerated()
+                            {
+                                roundManager.boss.attacks.remove(at: Int(eliminate[index].y))
                             }
                         }
                     }

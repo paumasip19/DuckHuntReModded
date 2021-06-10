@@ -70,6 +70,8 @@ struct Round {
     var lastCoinsShot = 0
     var returnToMistakes = false
     
+    var ducksLifeTotal: Float = 0
+    
     var boss: Boss
     
     init(gLimX: CGPoint, gLimY: CGPoint) {
@@ -90,15 +92,17 @@ struct Round {
     
     mutating func spawnBoss()
     {
-        var num = 0
+        var num: Float = 0
 
         boss = Boss(gLimX: gameLimitsX, gLimY: gameLimitsY)
         
-        num += boss.life
+        boss.life = Int(ducksLifeTotal * 0.25)
+        ducksLifeTotal = 0
+        num += Float(boss.life)
         
-        num *= 2
-        calculateBullets(num: num)
-        numBullets = num
+        num = num * 1.5
+        calculateBullets(num: Int(num))
+        numBullets = Int(num)
     }
     
     mutating func spawnDucks()
@@ -115,6 +119,8 @@ struct Round {
                 index = index + 1
             }
         }
+        
+        ducksLifeTotal += Float(num)
         
         num *= 2
         calculateBullets(num: num)
@@ -238,9 +244,14 @@ struct Round {
                     coinsShot += 1
                 }
             }
-            else if(isBossRound)
+        }
+        else if(isBossRound)
+        {
+            if(boss.life == 0)
             {
-                
+                boss.shouldKillBoss()
+                billboardFlags[0] = true
+                timer = 0
             }
         }
         

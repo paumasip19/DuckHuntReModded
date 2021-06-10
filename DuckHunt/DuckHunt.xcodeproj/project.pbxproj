@@ -87,12 +87,12 @@
 				EF0BE92C263B285C00164974 /* DuckEnemy.swift */,
 				EF6B1005265434FB00CC7F3A /* Round.swift */,
 				EF6B1001264AF34500CC7F3A /* Points.swift */,
+				EFA6FDB92671378E009F3F67 /* Boss.swift */,
 				EFE20F102631F6CB00D45033 /* Main.storyboard */,
 				EFA6FDB3266EC107009F3F67 /* MenuScene.sks */,
 				CBDA2F812642B7AC00DF2C0A /* GameScene.sks */,
 				EFE20F132631F6CC00D45033 /* Assets.xcassets */,
 				EFE20F152631F6CC00D45033 /* Info.plist */,
-				EFA6FDB92671378E009F3F67 /* Boss.swift */,
 			);
 			path = DuckHunt;
 			sourceTree = "<group>";

@@ -8,7 +8,7 @@
 import GameplayKit
 import SpriteKit
 
-struct Boss
+struct Boss //let bombSound = SKAction.playSoundFileNamed("bomb.wav", waitForCompletion: false)
 {
     let runAnimation: [SKTexture]?
     var runAction: SKAction?
@@ -29,7 +29,7 @@ struct Boss
     let initialPos: CGPoint
     var lastPos: CGPoint
     
-    var life: Int
+    var life: Int = -1
     
     let gameLimitsX: CGPoint
     let gameLimitsY: CGPoint
@@ -43,21 +43,23 @@ struct Boss
     
     var points: [Int]
     
-    /*var attackProbability: Int
-    var addAttack = false*/
+    var attackProbability: Int
+    var addAttack = false
     
     var attacks = [Attack]()
     
     var timer = 0
     
     var node: SKSpriteNode
+    var explosionNode: SKSpriteNode
+    
+    let explosionAnimation: [SKTexture]?
+    var explosionAction: SKAction?
+    let explosionActionKey: String?
     
     init(gLimX: CGPoint, gLimY: CGPoint)
     {
-        life = 1
-        
         speed = generalSpeed //* extraSpeed
-        
         
         let rand = Int.random(in: 0...1)
         initialPos = initialPositions[rand]
@@ -77,12 +79,20 @@ struct Boss
         node.position = initialPos
         node.zPosition = 10
         
+        explosionNode = SKSpriteNode(imageNamed: "BossHits_0")
+        explosionNode.name = "BossExplosion"
+        explosionNode.size = CGSize(width: 500, height: 500)
+        explosionNode.position = CGPoint(x: -2000, y: 0)
+        explosionNode.zPosition = 11
+        
         self.lastPos = self.node.position
         
         self.gameLimitsX = CGPoint(x: gLimX.x + node.size.width/2, y: gLimX.y - node.size.width/2)
         self.gameLimitsY = gLimY
         
         points = [0, 0, 8, 0, 0, 0]
+        
+        self.attackProbability = 3
         
         self.runAnimation = runAnim
         self.runActionKey = runActionK
@@ -96,6 +106,9 @@ struct Boss
         self.fallAnimation = fallAnim
         self.fallActionKey = fallActionK
         
+        self.explosionAnimation = explosionAnim
+        self.explosionActionKey = explosionActionK
+        
         self.finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
         
         let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 2)
@@ -108,13 +121,37 @@ struct Boss
         self.originalScale = CGSize(width: self.node.xScale, height: self.node.yScale)
         
         setScale(scale: CGPoint(x: direction.x, y: 1))
+        
+        self.explosionAction = SKAction.animate(with: self.explosionAnimation!, timePerFrame: 0.03)
     }
     
     mutating func bossMovement()
     {
         changeDirection()
-        
+
         actions()
+    }
+    
+    func moveExplosion()
+    {
+        self.explosionNode.position.x = -2000
+    }
+    
+    func addExplosion()
+    {
+        self.explosionNode.run(explosionAction!, completion: moveExplosion)
+    }
+    
+    mutating func setRunAction()
+    {
+        finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
+        
+        node.removeAllActions()
+        
+        let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 2)
+        let animation0 = SKAction.animate(with: self.runAnimation!, timePerFrame: Double(generalSpeed)/1000)
+        self.runAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
+        self.node.run(self.runAction!, withKey: self.runActionKey!)
     }
 
     mutating func changeDirection()
@@ -122,15 +159,7 @@ struct Boss
         if(node.position.x <= gameLimitsX.x || node.position.x >= gameLimitsX.y)
         {
             direction.x = -direction.x
-            finalSpeed = CGPoint(x: direction.x * speed * 10, y: direction.y * speed * 10)
-            
-            node.removeAllActions()
-            
-            let movement = SKAction.moveBy(x: self.finalSpeed.x, y: self.finalSpeed.y, duration: 2)
-            let animation0 = SKAction.animate(with: self.runAnimation!, timePerFrame: Double(generalSpeed)/1000)
-            self.runAction = SKAction.group([SKAction.repeatForever(animation0), SKAction.repeatForever(movement)])
-            self.node.run(self.runAction!, withKey: self.runActionKey!)
-            
+            setRunAction()
             setScale(scale: CGPoint(x: direction.x, y: 1))
         }
     }
@@ -152,6 +181,60 @@ struct Boss
         {
             timer = 0
         }
+    }
+    
+    func isDead() -> Bool
+    {
+        if(life == 0)
+        {
+            return true
+        }
+        
+        return false
+    }
+    
+    func shouldKillBoss()
+    {
+        if(isDead())
+        {
+            node.removeFromParent()
+            explosionNode.removeFromParent()
+        }
+    }
+    
+    mutating func checkHit(position: CGPoint) -> Bool
+    {
+        if(isInBounds(limitsX: CGPoint(x: getZeroZero(node: self.node).x, y: getZeroZero(node: self.node).x + self.node.size.width),
+                      limitsY: CGPoint(x: getZeroZero(node: self.node).y, y: getZeroZero(node: self.node).y + self.node.size.height),
+                      pos: position) && !self.isDead())
+        {
+            self.life -= 1
+            
+            //self.node.removeAllActions()
+            
+            if(life != 0) //REVISAR
+            {
+                self.explosionNode.position = position
+                self.explosionNode.position.y += 10
+                addExplosion()
+            }
+
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+    
+    func getPoints() -> [Int]
+    {
+        if(life == 0)
+        {
+            return points
+        }
+        
+        return [0, 0, 0, 0, 0, 0]
     }
     
     func getZeroZero(node: SKSpriteNode) -> CGPoint
@@ -213,3 +296,24 @@ private let jumpActionK = "BossJump"
 private let fallAnim = [SKTexture(imageNamed: "Boss_7")]
 
 private let fallActionK = "BossFall"
+
+private let explosionAnim = [SKTexture(imageNamed: "BossHits_0"),
+                             SKTexture(imageNamed: "BossHits_1"),
+                             SKTexture(imageNamed: "BossHits_2"),
+                             SKTexture(imageNamed: "BossHits_3"),
+                             SKTexture(imageNamed: "BossHits_4"),
+                             SKTexture(imageNamed: "BossHits_5"),
+                             SKTexture(imageNamed: "BossHits_6"),
+                             SKTexture(imageNamed: "BossHits_7"),
+                             SKTexture(imageNamed: "BossHits_8"),
+                             SKTexture(imageNamed: "BossHits_9"),
+                             SKTexture(imageNamed: "BossHits_10"),
+                             SKTexture(imageNamed: "BossHits_11"),
+                             SKTexture(imageNamed: "BossHits_12"),
+                             SKTexture(imageNamed: "BossHits_13"),
+                             SKTexture(imageNamed: "BossHits_14"),
+                             SKTexture(imageNamed: "BossHits_15"),
+                             SKTexture(imageNamed: "BossHits_16")]
+
+private let explosionActionK = "Explosion"
+
